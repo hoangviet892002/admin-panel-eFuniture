@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-import { ObjectUpdateForm, SidebarMenu } from "../../components";
+import { Loading, ObjectUpdateForm, SidebarMenu } from "../../components";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,6 +25,7 @@ const initialAccounts: Account = {
 };
 
 const UpdateAccountPage = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [Account, setAccount] = useState<Account>(initialAccounts);
   const { id } = useParams();
   const fields: Field<Account>[] = [
@@ -42,12 +43,15 @@ const UpdateAccountPage = () => {
     }
   };
   useEffect(() => {
+    setLoading(true);
     fetchAccount();
+    setLoading(false);
   }, []);
 
   const handleSave = async (updatedAccount: Account) => {
-    console.log(updatedAccount);
+    setLoading(true);
     AccountService.updateAccount(updatedAccount);
+    setLoading(false);
   };
 
   return (
@@ -57,7 +61,15 @@ const UpdateAccountPage = () => {
         <Typography variant="h4" gutterBottom>
           Chỉnh sửa tài khoản
         </Typography>
-        <ObjectUpdateForm data={Account} fields={fields} onSave={handleSave} />
+        {loading ? (
+          <Loading />
+        ) : (
+          <ObjectUpdateForm
+            data={Account}
+            fields={fields}
+            onSave={handleSave}
+          />
+        )}
       </Box>
     </Box>
   );

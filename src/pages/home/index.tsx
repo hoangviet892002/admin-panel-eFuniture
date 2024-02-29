@@ -1,20 +1,6 @@
-import React, { useEffect } from "react";
-import { SidebarMenu } from "../../components";
 import { Box } from "@mui/material";
-import { AuthService } from "../../service";
-import { useNavigate } from "react-router";
-import { toast } from "react-toastify";
+import { SidebarMenu } from "../../components";
 const HomePage = () => {
-  const navigate = useNavigate();
-  async function fetchUser() {
-    const user = await AuthService.getCurrentUser();
-    console.log(user);
-    if (user === null) {
-      navigate("/login");
-    }
-  }
-  fetchUser();
-
   return (
     <Box sx={{ display: "flex" }}>
       <SidebarMenu />

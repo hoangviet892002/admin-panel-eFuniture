@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-import { ObjectUpdateForm, SidebarMenu } from "../../components";
+import { Loading, ObjectUpdateForm, SidebarMenu } from "../../components";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,6 +30,7 @@ const initialVouchers: Voucher = {
 };
 
 const UpdateVoucherPages = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [Voucher, setVoucher] = useState<Voucher>(initialVouchers);
   const { id } = useParams();
   const fields: Field<Voucher>[] = [
@@ -40,26 +41,20 @@ const UpdateVoucherPages = () => {
     { id: "percent", label: "Giá trị sử dụng (%)", type: "string" },
   ];
   const fetchVoucher = async () => {
-    try {
-      const response = await VoucherService.getVoucherById(`${id}`);
-      setVoucher(response);
-    } catch (error) {
-      console.error("Failed toget Voucher", error);
-    }
+    setLoading(true);
+
+    const response = await VoucherService.getVoucherById(`${id}`);
+    setVoucher(response);
+    setLoading(false);
   };
   useEffect(() => {
     fetchVoucher();
   }, []);
 
   const handleSave = async (updatedVoucher: Voucher) => {
-    try {
-      const response = VoucherService.updateVoucher(updatedVoucher);
-      //   console.log("Update voucher response:", response);
-      //   toast.success("Sửa thành công!");
-    } catch (error) {
-      toast.error("Sửa thất bại. Vui lòng kiểm tra lại thông tin!");
-      console.error("Add error:", error);
-    }
+    setLoading(true);
+    VoucherService.updateVoucher(updatedVoucher);
+    setLoading(false);
   };
 
   return (
@@ -69,11 +64,15 @@ const UpdateVoucherPages = () => {
         <Typography variant="h4" gutterBottom>
           Chỉnh sửa sản phẩm
         </Typography>
-        <ObjectUpdateForm
-          data={Voucher}
-          fields={fields}
-          onSave={() => handleSave(Voucher)}
-        />
+        {loading ? (
+          <Loading />
+        ) : (
+          <ObjectUpdateForm
+            data={Voucher}
+            fields={fields}
+            onSave={() => handleSave(Voucher)}
+          />
+        )}
       </Box>
     </Box>
   );

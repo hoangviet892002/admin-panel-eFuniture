@@ -7,12 +7,18 @@ import {
   CardContent,
   CardMedia,
   Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 
 interface Field<T> {
   id: keyof T;
   label: string;
-  type: "string" | "number" | "image";
+  type: "string" | "number" | "image" | "select";
+  options?: Array<{ label: string; value: string | number }>;
+  name?: string;
 }
 
 interface ObjectUpdateFormProps<T> {
@@ -100,6 +106,23 @@ function ObjectUpdateForm<T>({
               </Card>
             )}
           </Box>
+        );
+      case "select":
+        return (
+          <FormControl fullWidth margin="normal" key={field.name}>
+            <InputLabel>{field.label}</InputLabel>
+            <Select
+              value={(formData[field.id as keyof T] || "") as string}
+              label={field.label}
+              onChange={(e) => handleChange(field.id, e.target.value as string)}
+            >
+              {field.options?.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         );
       default:
         return null;

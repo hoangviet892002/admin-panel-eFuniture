@@ -17,6 +17,7 @@ import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantity
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import PaymentIcon from "@mui/icons-material/Payment";
 import LogoutIcon from "@mui/icons-material/Logout";
+import CategoryIcon from "@mui/icons-material/Category";
 import { Link, useLocation } from "react-router-dom";
 import { AuthService } from "../../service";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +28,7 @@ const menuItems = [
   { text: "Account", icon: <AccountCircleIcon />, path: "/accounts" },
   { text: "Appointment", icon: <EventNoteIcon />, path: "/appointments" },
   { text: "Order", icon: <ShoppingBasketIcon />, path: "/orders" },
+  { text: "Category", icon: <CategoryIcon />, path: "/categories" },
   {
     text: "Product",
     icon: <ProductionQuantityLimitsIcon />,
@@ -75,11 +77,11 @@ const SidebarMenu: React.FC = () => {
             to={item.path}
             sx={{
               backgroundColor:
-                location.pathname === item.path ? "#1976d2" : "inherit", // Sử dụng màu đậm hơn
-              color: location.pathname === item.path ? "#ffffff" : "inherit", // Thay đổi màu chữ khi được chọn
+                location.pathname === item.path ? "#1976d2" : "inherit",
+              color: location.pathname === item.path ? "#ffffff" : "inherit",
               "&:hover": {
-                backgroundColor: "#1565c0", // Màu khi hover
-                color: "#ffffff", // Màu chữ khi hover
+                backgroundColor: "#1565c0",
+                color: "#ffffff",
               },
             }}
           >

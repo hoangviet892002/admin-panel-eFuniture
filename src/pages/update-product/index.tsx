@@ -1,54 +1,76 @@
 import { Box, Typography } from "@mui/material";
-import { useState } from "react";
-import { ObjectUpdateForm, SidebarMenu } from "../../components";
+import { useEffect, useState } from "react";
+import { Loading, ObjectUpdateForm, SidebarMenu } from "../../components";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  img: string;
-}
+import { Category, Product } from "../../interface";
+import { CategoryService, ProductService } from "../../service";
+import { useParams } from "react-router";
 interface Field<T> {
   id: keyof T;
   label: string;
-  type: "string" | "number" | "image";
+  type: "string" | "number" | "image" | "select";
+  options?: Array<{ label: string; value: string | number }>;
 }
 
-const initialProducts: Product = {
-  id: "1",
-  name: "Sản phẩm A",
-  price: 100000,
-  quantity: 10,
+const initalProduct: Product = {
+  category: 0,
+  description: "",
+  id: "",
   img: "",
+  name: "",
+  price: 0,
+  quantity: 0,
 };
 
 const UpdateProductPages = () => {
-  const [Product] = useState(initialProducts);
+  const { id } = useParams();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [Product, setProduct] = useState<Product>(initalProduct);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [typeOptions, setTypeOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
   const fields: Field<Product>[] = [
     { id: "name", label: "Tên Sản Phẩm", type: "string" },
     { id: "price", label: "Giá", type: "number" },
-    { id: "quantity", label: "Số Lượng", type: "number" },
     { id: "img", label: "Ảnh", type: "image" },
+    {
+      id: "category",
+      type: "select",
+      label: "Category",
+      options: typeOptions,
+    },
   ];
+  const fetchProduct = async () => {
+    const response = await ProductService.getProductById(`${id}`);
+    setProduct(response);
+  };
+  const fetchCategory = async () => {
+    const response = await CategoryService.getCategories();
+    setCategories(response);
+  };
 
   const handleSave = async (updatedProduct: Product) => {
-    console.log("Updated Product:", updatedProduct);
-    try {
-      const response = await axios.post(
-        "/api/update-quantity-product",
-        updatedProduct
-      );
-      console.log("Add product response:", response.data);
-
-      toast.success("Sửa thành công!");
-    } catch (error) {
-      toast.error("Sửa thất bại. Vui lòng kiểm tra lại thông tin!");
-      console.error("Add error:", error);
-    }
+    setLoading(true);
+    ProductService.updateProduct(updatedProduct);
+    setLoading(false);
   };
+  useEffect(() => {
+    setLoading(true);
+    fetchProduct();
+    fetchCategory();
+    setLoading(false);
+  }, []);
+  useEffect(() => {
+    const newTypeOptions = categories.map((category) => ({
+      label: category.name,
+      value: category.id,
+    }));
+
+    setTypeOptions(newTypeOptions);
+  }, [categories]);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -57,7 +79,15 @@ const UpdateProductPages = () => {
         <Typography variant="h4" gutterBottom>
           Chỉnh sửa sản phẩm
         </Typography>
-        <ObjectUpdateForm data={Product} fields={fields} onSave={handleSave} />
+        {loading ? (
+          <Loading />
+        ) : (
+          <ObjectUpdateForm
+            data={Product}
+            fields={fields}
+            onSave={handleSave}
+          />
+        )}
       </Box>
     </Box>
   );

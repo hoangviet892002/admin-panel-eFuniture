@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { CustomTable, SidebarMenu, Pagination } from "../../components";
+import {
+  CustomTable,
+  SidebarMenu,
+  Pagination,
+  Loading,
+} from "../../components";
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,9 +27,7 @@ const columns = [
   { id: "maxUse", label: "Số lần sử dụng", minWidth: 100 },
 ];
 const VoucherPage = () => {
-  // const [currentPage, setCurrentPage] = useState<number>(1);
-  // const [totalPages, setTotalPages] = useState<number>(0);
-  // const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchVouchers = async () => {
     try {
       const response = await VoucherService.getVouchersByPage(currentPage);
@@ -55,9 +58,10 @@ const VoucherPage = () => {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const navigate = useNavigate();
   useEffect(() => {
+    setLoading(true);
     fetchTotalPages();
     fetchVouchers();
-    toast("fetch success");
+    setLoading(false);
   }, [currentPage]);
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -68,6 +72,7 @@ const VoucherPage = () => {
   };
 
   const handleDelete = (voucherId: string) => {
+    setLoading(true);
     fetchVouchersDelete(voucherId);
     fetchTotalPages();
     fetchVouchers();
@@ -76,6 +81,7 @@ const VoucherPage = () => {
       fetchTotalPages();
       fetchVouchers();
     }
+    setLoading(false);
   };
 
   const navigateToAddVoucherPage = () => {
@@ -97,18 +103,23 @@ const VoucherPage = () => {
             Thêm Voucher
           </Button>
         </div>
-
-        <CustomTable
-          columns={columns}
-          data={vouchers}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-        <Pagination
-          total={totalPages}
-          selected={currentPage}
-          onChange={handlePageChange}
-        />
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <CustomTable
+              columns={columns}
+              data={vouchers}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+            <Pagination
+              total={totalPages}
+              selected={currentPage}
+              onChange={handlePageChange}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );

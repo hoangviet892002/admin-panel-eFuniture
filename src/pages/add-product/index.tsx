@@ -1,20 +1,20 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { FormField, MyForm, SidebarMenu } from "../../components";
 import { Typography, Box } from "@mui/material";
+import { Category, Product } from "../../interface";
+import { CategoryService, ProductService } from "../../service";
 
 const AddProductPage: React.FC = () => {
-  const typeLabels: Record<number, string> = {
-    1: "Sofa",
-    2: "Begs",
-  };
-  const typeOptions = Object.entries(typeLabels).map(([value, label]) => ({
-    label,
-    value,
-  }));
+  const [loading, setLoading] = useState<boolean>(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const [typeOptions, setTypeOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   const AddProductFields: FormField[] = [
     { type: "text", label: "Name", name: "name" },
@@ -22,24 +22,34 @@ const AddProductPage: React.FC = () => {
     { type: "text", label: "Description", name: "description" },
     {
       type: "select",
-      label: "Type",
-      name: "type",
+      label: "Category",
+      name: "category",
       options: typeOptions,
     },
     { type: "image", label: "Picture", name: "picture" },
   ];
 
-  const handleSubmit = async (values: any) => {
-    try {
-      const response = await axios.post("/api/add-product", values);
-      console.log("Add product response:", response.data);
-
-      toast.success("Thêm thành công!");
-    } catch (error) {
-      toast.error("Thêm thất bại. Vui lòng kiểm tra lại thông tin!");
-      console.error("Add error:", error);
-    }
+  const handleSubmit = async (values: Product) => {
+    ProductService.createProduct(values);
   };
+  const fetchCategories = async () => {
+    setLoading(true);
+    const response = await CategoryService.getCategories();
+    setCategories(response);
+
+    setLoading(false);
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+  useEffect(() => {
+    const newTypeOptions = categories.map((category) => ({
+      label: category.name,
+      value: category.id,
+    }));
+
+    setTypeOptions(newTypeOptions);
+  }, [categories]);
 
   return (
     <Box sx={{ display: "flex" }}>

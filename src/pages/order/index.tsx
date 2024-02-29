@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, TextField } from "@mui/material";
-import { CustomTable, SidebarMenu, Pagination } from "../../components";
+import {
+  CustomTable,
+  SidebarMenu,
+  Pagination,
+  Loading,
+} from "../../components";
 import { StatusGraph } from "../../helpers";
+import { Order } from "../../interface";
+import OrderService from "../../service/OrderService";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 const statusGraph = new StatusGraph();
 statusGraph.addEdge(1, 2);
@@ -18,48 +27,37 @@ const statusLabels: Record<number, string> = {
   5: "Từ Chối Xác Nhận",
 };
 
-const initialData = [
-  {
-    id: "1",
-    customerName: "Nguyễn Văn A",
-    address: "123 Đường ABC",
-    status: 1,
-  },
-  {
-    id: "2",
-    customerName: "Nguyễn Văn B",
-    address: "123 Đường ABC",
-    status: 2,
-  },
-];
-
 const OrderPage = () => {
-  const [originalOrders] = useState(initialData);
-  const [orders, setOrders] = useState(initialData);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages: number = 40;
-  useEffect(() => {
-    const filteredOrders = initialData.filter((order) =>
-      order.customerName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setOrders(filteredOrders);
-  }, [searchTerm, originalOrders]);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [orders, setOrders] = useState<Order[]>([]);
+  useEffect(() => {}, [searchTerm, currentPage]);
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
   const handleStatusChange = (orderId: string, newStatus: number) => {
-    const updatedOrders = orders.map((order) =>
-      order.id === orderId ? { ...order, status: newStatus } : order
-    );
-    setOrders(updatedOrders);
+    setLoading(true);
+    fetchOrdersUpdateStatus(orderId, newStatus);
+    setLoading(false);
   };
-  const handleEdit = (rowId: string) => {
-    console.log("Edit", rowId);
+  const handleEdit = (id: string) => {
+    navigate(`${id}`);
   };
 
-  const handleDelete = (rowId: string) => {
-    console.log("Delete", rowId);
+  const handleDelete = (id: string) => {
+    setLoading(true);
+    fetchOrdersDelete(id);
+    fetchTotalPages();
+    fetchOrders();
+    if (orders.length === 0 && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      fetchTotalPages();
+      fetchOrders();
+    }
+    setLoading(false);
   };
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -68,6 +66,8 @@ const OrderPage = () => {
   const columns = [
     { id: "customerName", label: "Tên Khách Hàng", minWidth: 170 },
     { id: "address", label: "Địa Chỉ", minWidth: 170 },
+    { id: "amount", label: "Tổng đơn", minWidth: 170 },
+    { id: "pay", label: "Cần trả thêm", minWidth: 170 },
     {
       id: "status",
       label: "Trạng Thái",
@@ -75,6 +75,29 @@ const OrderPage = () => {
       format: (value: number) => statusLabels[value] || "Unknown",
     },
   ];
+  const fetchTotalPages = async () => {
+    const response = await OrderService.getTotalPages(searchTerm);
+    setTotalPages(response);
+  };
+  const fetchOrders = async () => {
+    const response = await OrderService.getOrdersByPage(
+      currentPage,
+      searchTerm
+    );
+    setOrders(response);
+  };
+  const fetchOrdersDelete = async (Id: string) => {
+    OrderService.deleteOrder(Id);
+  };
+  const fetchOrdersUpdateStatus = async (Id: string, newStatus: number) => {
+    OrderService.updateOrderStatus(Id, newStatus);
+  };
+  useEffect(() => {
+    setLoading(true);
+    fetchTotalPages();
+    fetchOrders();
+    setLoading(false);
+  }, [currentPage, searchTerm]);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -89,20 +112,26 @@ const OrderPage = () => {
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}
         />
-        <CustomTable
-          columns={columns}
-          data={orders}
-          onStatusChange={handleStatusChange}
-          statusLabels={statusLabels}
-          statusGraph={statusGraph}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-        <Pagination
-          total={totalPages}
-          selected={currentPage}
-          onChange={handlePageChange}
-        />
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <CustomTable
+              columns={columns}
+              data={orders}
+              onStatusChange={handleStatusChange}
+              statusLabels={statusLabels}
+              statusGraph={statusGraph}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+            <Pagination
+              total={totalPages}
+              selected={currentPage}
+              onChange={handlePageChange}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );

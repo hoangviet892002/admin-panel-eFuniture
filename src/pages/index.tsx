@@ -15,6 +15,7 @@ import AppointmentDetailsPage from "./appointment-details";
 import UpdateProductPage from "./update-product";
 import UpdateAccountPage from "./update-account";
 import UpdateVoucherPages from "./update-voucher";
+import CategoryPage from "./category";
 export {
   HomePage,
   LoginPage,
@@ -33,4 +34,5 @@ export {
   UpdateProductPage,
   UpdateAccountPage,
   UpdateVoucherPages,
+  CategoryPage,
 };
