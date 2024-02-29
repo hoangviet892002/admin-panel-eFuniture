@@ -129,6 +129,25 @@ class AppointmentService {
       toast.error("Something went wrong");
     }
   }
+  static async postPickStaffAppointment(
+    appointmentId: string,
+    staffId: string
+  ) {
+    toast.success(
+      `Pick staff id ${staffId} for appointment id ${appointmentId}`
+    );
+    return;
+    try {
+      const response = await axios.post(`${API_URL}/appointments/`);
+      if (response.data.success !== true) {
+        return response.data.data;
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  }
 }
 
 export { AppointmentService as default };

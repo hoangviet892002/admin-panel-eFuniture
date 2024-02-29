@@ -15,6 +15,9 @@ class AuthService {
         if (response.data.isSuccess && response.data.data) {
           toast.success(response.data.message);
           localStorage.setItem("user", JSON.stringify(response.data.data));
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${response.data.data}`;
           return true;
         } else {
           toast.error(response.data.message);
@@ -29,6 +32,7 @@ class AuthService {
 
   static async logout() {
     localStorage.removeItem("user");
+    axios.defaults.headers.common["Authorization"] = "";
     toast.success("Logout");
   }
 

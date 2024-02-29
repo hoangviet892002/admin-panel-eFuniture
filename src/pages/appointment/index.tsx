@@ -2,12 +2,18 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Box, IconButton, Typography, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { CustomTable, SidebarMenu, Pagination } from "../../components";
+import {
+  CustomTable,
+  SidebarMenu,
+  Pagination,
+  Loading,
+} from "../../components";
 import { AppointmentService } from "../../service";
 import { Appointment } from "../../interface";
 import { toast } from "react-toastify";
 
 const AppointmentPage = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const columns = [
     { id: "nameCustomer", label: "Khách hàng ", minWidth: 150 },
@@ -59,8 +65,10 @@ const AppointmentPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [date, setDate] = useState("");
   useEffect(() => {
+    setLoading(true);
     fetchTotalPages();
     fetchAppointments();
+    setLoading(false);
   }, [currentPage, searchTerm, date]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const onViewDetails = (id: string) => {
@@ -96,12 +104,18 @@ const AppointmentPage = () => {
           variant="outlined"
           onChange={handleSearchChange}
         />
-        <CustomTable columns={columns} data={appointments} />
-        <Pagination
-          total={totalPages}
-          selected={currentPage}
-          onChange={handlePageChange}
-        />
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <CustomTable columns={columns} data={appointments} />
+            <Pagination
+              total={totalPages}
+              selected={currentPage}
+              onChange={handlePageChange}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );

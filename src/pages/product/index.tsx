@@ -1,34 +1,82 @@
-import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CustomTable, SidebarMenu, Pagination } from "../../components";
+import {
+  CustomTable,
+  Loading,
+  Pagination,
+  SidebarMenu,
+} from "../../components";
 import { FormatNumber } from "../../helpers";
+import { Category, Product } from "../../interface";
+import { CategoryService, ProductService } from "../../service";
+import Action from "./Action";
 import "./Product.css";
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
-const initialProducts: Product[] = [
-  { id: "1", name: "Sản phẩm A", price: 100000, quantity: 10 },
-  { id: "2", name: "Sản phẩm B", price: 200000, quantity: 20 },
-];
-
 const ProductPage = () => {
-  const [products] = useState(initialProducts);
+  const initialCategory: Category = {
+    id: "none",
+    name: "",
+  };
+  const [loading, setLoading] = useState<boolean>(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages: number = 40;
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [selectedCategory, setSelectedCategory] =
+    useState<Category>(initialCategory);
+
   const navigate = useNavigate();
+  const fetchTotalPages = async () => {
+    const response = await ProductService.getTotalPages(
+      currentPage,
+      searchTerm
+    );
+    setTotalPages(response);
+  };
+  const fetchCategories = async () => {
+    const response = await CategoryService.getCategories();
+    setCategories(response);
+  };
+  const fetchProducts = async () => {
+    const response = await ProductService.getProductsByPage(
+      currentPage,
+      searchTerm,
+      selectedCategory.id
+    );
+    setProducts(response);
+  };
+  const fetchProductsDelete = async (Id: string) => {
+    ProductService.deleteProduct(Id);
+  };
+  useEffect(() => {
+    setLoading(true);
+    fetchCategories();
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    //Api total page
-    //Api fetch for filter
-  }, [searchTerm]);
-
+    setLoading(true);
+    fetchTotalPages();
+    fetchProducts();
+    setLoading(false);
+  }, [searchTerm, currentPage, selectedCategory]);
+  const handleCategoryChange = (event: SelectChangeEvent<string>) => {
+    if (event.target.value === "") {
+      setSelectedCategory(initialCategory);
+    } else {
+      const category = categories.find((c) => c.id === event.target.value);
+      setSelectedCategory(category || initialCategory);
+    }
+  };
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -37,7 +85,18 @@ const ProductPage = () => {
     navigate(`${productId}`);
   };
 
-  const handleDelete = (productId: string) => {};
+  const handleDelete = (id: string) => {
+    setLoading(true);
+    fetchProductsDelete(id);
+    fetchTotalPages();
+    fetchProducts();
+    if (products.length === 0 && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      fetchTotalPages();
+      fetchProducts();
+    }
+    setLoading(false);
+  };
 
   const navigateToAddProductPage = () => {
     navigate("add");
@@ -48,7 +107,12 @@ const ProductPage = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-
+  const handleAddQuantity = (id: string, quantity: number) => {
+    setLoading(true);
+    ProductService.updateQuantityProduct(id, quantity);
+    fetchProducts();
+    setLoading(false);
+  };
   const columns = [
     { id: "name", label: "Tên Sản Phẩm", minWidth: 170 },
     {
@@ -57,7 +121,20 @@ const ProductPage = () => {
       minWidth: 100,
       format: (value: number) => FormatNumber(value) || "Unknown",
     },
-    { id: "quantity", label: "Số Lượng", minWidth: 100 },
+    {
+      id: "quantity",
+      label: "Số Lượng",
+      minWidth: 100,
+      format: (value: number) => FormatNumber(value) || "Unknown",
+    },
+    {
+      id: "id",
+      label: "Nhập kho",
+      minWidth: 170,
+      format: (value: string) => (
+        <Action id={value} handler={handleAddQuantity} />
+      ),
+    },
   ];
 
   return (
@@ -75,32 +152,47 @@ const ProductPage = () => {
           >
             Thêm Sản Phẩm
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={navigateToAddQuantityProductPage}
-          >
-            Nhập Kho
-          </Button>
+
           <TextField
             label="Tìm kiếm sản phẩm"
             variant="outlined"
             onChange={handleSearchChange}
             style={{ marginLeft: 20 }}
           />
+          <Select
+            labelId="category-select-label"
+            id="category-select"
+            value={selectedCategory ? selectedCategory.id : ""}
+            label="Danh Mục"
+            onChange={handleCategoryChange}
+          >
+            <MenuItem value="">
+              <em>Không chọn</em>
+            </MenuItem>
+            {categories.map((category) => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
         </div>
-
-        <CustomTable
-          columns={columns}
-          data={products}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-        <Pagination
-          total={totalPages}
-          selected={currentPage}
-          onChange={handlePageChange}
-        />
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <CustomTable
+              columns={columns}
+              data={products}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+            <Pagination
+              total={totalPages}
+              selected={currentPage}
+              onChange={handlePageChange}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );

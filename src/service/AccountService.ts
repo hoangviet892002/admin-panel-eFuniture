@@ -180,8 +180,24 @@ class AccountService {
       toast.error("Something went wrong");
     }
   }
-  static async getStaffForAppoinment(appointmentData: Appointment) {
-    return;
+  static async getStaffForAppoinment(
+    appointmentData: Appointment,
+    currentPage: number
+  ) {
+    return initialAccounts;
+    try {
+      const response = await axios.put(`${API_URL}/accounts/getstaff/`);
+      if (response.data.success !== true) {
+        return response.data.data;
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  }
+  static async getTotalPageStaffForAppoinment(appointmentData: Appointment) {
+    return 40;
     try {
       const response = await axios.put(`${API_URL}/accounts/getstaff/`);
       if (response.data.success !== true) {

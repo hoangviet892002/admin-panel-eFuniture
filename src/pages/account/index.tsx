@@ -1,6 +1,11 @@
 import { Box, Typography, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
-import { CustomTable, SidebarMenu, Pagination } from "../../components";
+import {
+  CustomTable,
+  SidebarMenu,
+  Pagination,
+  Loading,
+} from "../../components";
 import { StatusGraph } from "../../helpers";
 import AmountAction from "./Sub-Component";
 import { useNavigate } from "react-router";
@@ -20,6 +25,7 @@ const roleLabels: Record<number, string> = {
 
 const AccountPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const columns = [
     { id: "name", label: "Tên ", minWidth: 170 },
@@ -53,12 +59,8 @@ const AccountPage = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
 
   const fetchTotalPages = async () => {
-    try {
-      const response = await AccountService.getTotalPages(searchTerm);
-      setTotalPages(response);
-    } catch (error) {
-      console.error("Failed to fetch total pages", error);
-    }
+    const response = await AccountService.getTotalPages(searchTerm);
+    setTotalPages(response);
   };
   const fetchAccounts = async () => {
     try {
@@ -86,9 +88,10 @@ const AccountPage = () => {
     }
   };
   useEffect(() => {
+    setLoading(true);
     fetchTotalPages();
     fetchAccounts();
-    toast("fetch success");
+    setLoading(false);
   }, [currentPage, searchTerm]);
 
   const handlePageChange = (pageNumber: number) => {
@@ -107,6 +110,7 @@ const AccountPage = () => {
   };
 
   const handleDelete = (id: string) => {
+    setLoading(true);
     fetchAccountsDelete(id);
     fetchTotalPages();
     fetchAccounts();
@@ -115,15 +119,20 @@ const AccountPage = () => {
       fetchTotalPages();
       fetchAccounts();
     }
+    setLoading(false);
   };
   const handleAdd = (id: string, amount: number) => {
+    setLoading(true);
     AccountService.addMoney(id, amount);
     fetchAccounts();
+    setLoading(false);
   };
 
   const handleSubtract = (id: string, amount: number) => {
+    setLoading(true);
     AccountService.subtractMoney(id, amount);
     fetchAccounts();
+    setLoading(false);
   };
 
   return (
@@ -139,20 +148,26 @@ const AccountPage = () => {
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}
         />
-        <CustomTable
-          columns={columns}
-          data={accounts}
-          onStatusChange={handleRoleChange}
-          statusLabels={roleLabels}
-          statusGraph={statusGraph}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-        <Pagination
-          total={totalPages}
-          selected={currentPage}
-          onChange={handlePageChange}
-        />
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <CustomTable
+              columns={columns}
+              data={accounts}
+              onStatusChange={handleRoleChange}
+              statusLabels={roleLabels}
+              statusGraph={statusGraph}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+            <Pagination
+              total={totalPages}
+              selected={currentPage}
+              onChange={handlePageChange}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );

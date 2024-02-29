@@ -9,6 +9,7 @@ import type { FormProps } from "./DynamicForm/InterfaceForm";
 import ObjectDetailsDisplay from "./objectDetails";
 import ObjectUpdateForm from "./ObjectUpdateForm";
 import Pagination from "./pagination";
+import Loading from "./loading";
 
 export {
   Form,
@@ -19,5 +20,6 @@ export {
   ObjectDetailsDisplay,
   ObjectUpdateForm,
   Pagination,
+  Loading,
 };
 export type { FormItemProps, FormProps, FormField };
