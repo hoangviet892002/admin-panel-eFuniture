@@ -20,6 +20,11 @@ import {
   UpdateAccountPage,
   UpdateVoucherPages,
   CategoryPage,
+  ContactListPage,
+  OrderDetailPage,
+  ContactDetailPages,
+  CreateContactPages,
+  CreateContactFormPages,
 } from "../../../pages";
 import Protected from "./Protected";
 import { AuthService } from "../../../service";
@@ -46,6 +51,43 @@ const Routers = () => {
             }
           />
           <Route path="login" element={<LoginPage />} />
+          <Route path="contact">
+            <Route
+              path=""
+              element={
+                <Protected>
+                  <ContactListPage />
+                </Protected>
+              }
+            />
+            <Route
+              path=":id"
+              element={
+                <Protected>
+                  <ContactDetailPages />
+                </Protected>
+              }
+            />
+            <Route path="add">
+              <Route
+                path=""
+                element={
+                  <Protected>
+                    <CreateContactPages />
+                  </Protected>
+                }
+              />
+              <Route
+                path=":id"
+                element={
+                  <Protected>
+                    <CreateContactFormPages />
+                  </Protected>
+                }
+              />
+            </Route>
+          </Route>
+
           <Route path="accounts">
             <Route
               path=""
@@ -83,14 +125,25 @@ const Routers = () => {
             />
           </Route>
 
-          <Route
-            path="orders"
-            element={
-              <Protected>
-                <OrderPage />
-              </Protected>
-            }
-          />
+          <Route path="orders">
+            <Route
+              path=""
+              element={
+                <Protected>
+                  <OrderPage />
+                </Protected>
+              }
+            />
+            <Route
+              path=":id"
+              element={
+                <Protected>
+                  <OrderDetailPage />
+                </Protected>
+              }
+            />
+          </Route>
+
           <Route
             path="order-processing"
             element={

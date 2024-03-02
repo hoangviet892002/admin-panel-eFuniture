@@ -21,6 +21,7 @@ const statusLabels: Record<number, string> = {
   4: "Hoàn thiện",
   5: "Đã bàn giao",
   6: "Đóng dự án",
+  7: "Bị hủy",
 };
 
 const initialData = [

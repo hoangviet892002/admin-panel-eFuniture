@@ -59,6 +59,7 @@ function ObjectUpdateForm<T>({
       reader.readAsDataURL(files[0]);
     }
   };
+
   const renderInputField = (field: Field<T>) => {
     switch (field.type) {
       case "string":

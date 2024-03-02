@@ -16,6 +16,11 @@ import UpdateProductPage from "./update-product";
 import UpdateAccountPage from "./update-account";
 import UpdateVoucherPages from "./update-voucher";
 import CategoryPage from "./category";
+import ContactListPage from "./contactList";
+import OrderDetailPage from "./orderDetail";
+import ContactDetailPages from "./contactDetail";
+import CreateContactPages from "./createContact";
+import CreateContactFormPages from "./createContactForm";
 export {
   HomePage,
   LoginPage,
@@ -35,4 +40,9 @@ export {
   UpdateAccountPage,
   UpdateVoucherPages,
   CategoryPage,
+  ContactListPage,
+  OrderDetailPage,
+  ContactDetailPages,
+  CreateContactPages,
+  CreateContactFormPages,
 };
