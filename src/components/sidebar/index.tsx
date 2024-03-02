@@ -18,6 +18,7 @@ import FeedbackIcon from "@mui/icons-material/Feedback";
 import PaymentIcon from "@mui/icons-material/Payment";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CategoryIcon from "@mui/icons-material/Category";
+import ContactsIcon from "@mui/icons-material/Contacts";
 import { Link, useLocation } from "react-router-dom";
 import { AuthService } from "../../service";
 import { useNavigate } from "react-router-dom";
@@ -35,9 +36,9 @@ const menuItems = [
     path: "/products",
   },
   {
-    text: "Order Processing",
-    icon: <ShoppingBasketIcon />,
-    path: "/order-processing",
+    text: "Contact",
+    icon: <ContactsIcon />,
+    path: "/contact",
   },
   { text: "Feedback", icon: <FeedbackIcon />, path: "/feedbacks" },
   { text: "Transaction", icon: <PaymentIcon />, path: "/transactions" },

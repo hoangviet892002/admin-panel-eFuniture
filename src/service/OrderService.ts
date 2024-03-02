@@ -1,7 +1,7 @@
 // OrderService.ts
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Order } from "../interface"; // Assuming you have an Order interface defined similarly to Voucher
+import { Item, Order, Status } from "../interface"; // Assuming you have an Order interface defined similarly to Voucher
 
 const API_URL = "api";
 
@@ -24,7 +24,19 @@ const order: Order = {
   amount: 100,
   pay: 20,
 };
-
+const initialItem: Item[] = [
+  {
+    id: "2131",
+    name: "Loli 1",
+    price: 2313,
+    quantity: 3124,
+  },
+];
+const initialStatus: Status[] = [
+  { id: "2", date: "14/2/2002", status: 1 },
+  { id: "23", date: "23/2/2002", status: 2 },
+  { id: "222", date: "24/2/2002", status: 3 },
+];
 class OrderService {
   static async getOrdersByPage(page: number, searchName: string) {
     return initialOrder; // Mocked data for demonstration
@@ -120,6 +132,12 @@ class OrderService {
     } catch (error) {
       toast.error("Something error");
     }
+  }
+  static async getOrderStatus(orderId: string) {
+    return initialStatus;
+  }
+  static async getOrderItem(orderId: string) {
+    return initialItem;
   }
 }
 
