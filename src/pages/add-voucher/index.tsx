@@ -10,9 +10,9 @@ import { Voucher } from "../../interface";
 const AddVoucherPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const AddVoucherFields: FormField[] = [
-    { type: "text", label: "Name", name: "name" },
+    { type: "text", label: "Name", name: "voucherName" },
     { type: "number", label: "Giá trị giảm(%)", name: "percent" },
-    { type: "number", label: "Số lần sử dụng", name: "maxUse" },
+    { type: "number", label: "Số lần sử dụng", name: "number" },
     {
       type: "date",
       label: "Ngày bắt đầu",
@@ -23,9 +23,19 @@ const AddVoucherPage: React.FC = () => {
       label: "Ngày kết thúc",
       name: "endDate",
     },
+    {
+      type: "number",
+      label: "Dành cho đơn hàng nhỏ nhất là",
+      name: "minimumOrderValue",
+    },
+    {
+      type: "number",
+      label: "Dành cho đơn hàng lớn nhất là",
+      name: "maximumDiscountAmount",
+    },
   ];
 
-  const handleSubmit = async (values: Voucher) => {
+  const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
       VoucherService.createVoucher(values);

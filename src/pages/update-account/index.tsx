@@ -11,7 +11,9 @@ import { useParams } from "react-router";
 interface Field<T> {
   id: keyof T;
   label: string;
-  type: "string" | "number" | "image";
+  type: "string" | "number" | "image" | "select" | "date";
+  options?: Array<{ label: string; value: string | number }>;
+  name?: string;
 }
 
 const initialAccounts: Account = {
@@ -21,7 +23,11 @@ const initialAccounts: Account = {
   password: "",
   address: "",
   wallet: 0,
-  role: 0,
+  roles: "",
+  dateOfBird: "",
+  gender: "",
+  phoneNumber: "",
+  lockoutEnd: "",
 };
 
 const UpdateAccountPage = () => {
@@ -30,9 +36,19 @@ const UpdateAccountPage = () => {
   const { id } = useParams();
   const fields: Field<Account>[] = [
     { id: "name", label: "Tên ", type: "string" },
-    { id: "password", label: "Mật khẩu", type: "string" },
-    { id: "email", label: "Mail", type: "string" },
-    { id: "address", label: "Địa chỉ", type: "string" },
+    { id: "dateOfBird", label: "Ngày sinh", type: "date" },
+    {
+      id: "gender",
+      label: "Giới tính",
+      type: "select",
+      options: [
+        { label: "Male", value: "male" },
+        { label: "Female", value: "female" },
+        { label: "Orther", value: "order" },
+      ],
+    },
+    { id: "email", label: "Email", type: "string" },
+    { id: "phoneNumber", label: "Số điện thoại", type: "string" },
   ];
   const fetchAccount = async () => {
     try {
@@ -48,7 +64,7 @@ const UpdateAccountPage = () => {
     setLoading(false);
   }, []);
 
-  const handleSave = async (updatedAccount: Account) => {
+  const handleSave = async (updatedAccount: any) => {
     setLoading(true);
     AccountService.updateAccount(updatedAccount);
     setLoading(false);

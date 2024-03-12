@@ -5,7 +5,7 @@ import {
   Pagination,
   Loading,
 } from "../../components";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { VoucherService } from "../../service";
@@ -30,8 +30,12 @@ const VoucherPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const fetchVouchers = async () => {
     try {
-      const response = await VoucherService.getVouchersByPage(currentPage);
-      setVouchers(response);
+      const response = await VoucherService.getVouchersByPage(
+        currentPage,
+        date
+      );
+      setTotalPages(response.totalPagesCount);
+      setVouchers(response.items);
     } catch (error) {
       console.error("Failed to fetch vouchers");
     }
@@ -46,27 +50,26 @@ const VoucherPage = () => {
     }
   };
   const fetchVouchersDelete = async (voucherId: string) => {
-    try {
-      const response = await VoucherService.deleteVoucher(voucherId);
-    } catch (error) {
-      console.error("Failed to fetch delete pages", error);
-    }
+    await VoucherService.deleteVoucher(voucherId);
   };
-
+  const [load, setLoad] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [date, setDate] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
     setLoading(true);
-    fetchTotalPages();
     fetchVouchers();
     setLoading(false);
-  }, [currentPage]);
+  }, [currentPage, date, load]);
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
 
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDate(event.target.value);
+  };
   const handleEdit = (voucherId: string) => {
     navigate(`${voucherId}`);
   };
@@ -74,14 +77,8 @@ const VoucherPage = () => {
   const handleDelete = (voucherId: string) => {
     setLoading(true);
     fetchVouchersDelete(voucherId);
-    fetchTotalPages();
-    fetchVouchers();
-    if (vouchers.length === 0 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      fetchTotalPages();
-      fetchVouchers();
-    }
     setLoading(false);
+    setLoad(!load);
   };
 
   const navigateToAddVoucherPage = () => {
@@ -94,6 +91,7 @@ const VoucherPage = () => {
         <Typography variant="h4" gutterBottom>
           Quản Lý Voucher
         </Typography>
+
         <div className="container-button">
           <Button
             variant="contained"
@@ -102,6 +100,15 @@ const VoucherPage = () => {
           >
             Thêm Voucher
           </Button>
+          <TextField
+            label="ngày"
+            type="date"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            style={{ marginRight: 20 }}
+            onChange={handleDateChange}
+          />
         </div>
         {loading ? (
           <Loading />

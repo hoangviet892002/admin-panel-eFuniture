@@ -2,25 +2,29 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Product } from "../interface";
 
-const API_URL = "api";
+const API_URL = process.env.REACT_APP_API + `/Product`;
 const initialProducts: Product[] = [
   {
     id: "1",
     name: "Sản phẩm A",
     description: "đây là sản phẩm A",
-    img: "link ảnh",
+    image: "link ảnh",
     price: 908,
-    quantity: 89739,
-    category: 2,
+    inventoryQuantity: 89739,
+    categoryId: "xxx",
+    categoryName: "xxx",
+    status: 1,
   },
   {
     id: "434",
     name: "Sản phẩm A",
     description: "đây là sản phẩm A",
-    img: "link ảnh",
+    image: "link ảnh",
     price: 908,
-    quantity: 89739,
-    category: 2,
+    inventoryQuantity: 89739,
+    categoryId: "xxx",
+    categoryName: "xxx",
+    status: 1,
   },
 ];
 
@@ -28,24 +32,33 @@ const product: Product = {
   id: "89",
   name: "Sản phẩm A",
   description: "đây là sản phẩm A",
-  img: "link ảnh",
+  image: "link ảnh",
   price: 908,
-  quantity: 89739,
-  category: 5,
+  inventoryQuantity: 89739,
+  categoryId: "xxx",
+  categoryName: "xxx",
+  status: 1,
 };
 
 class ProductService {
   static async getProductsByPage(
     page: number,
     searchTerm: string,
-    idCategory: string
+    idCategory: string,
+    price: any
   ) {
-    return initialProducts;
     try {
-      const response = await axios.get(`${API_URL}/Products`, {
-        params: { page },
+      const response = await axios.get(`${API_URL}/FilterProducts2`, {
+        params: {
+          page: page,
+          categoryId: idCategory,
+          productName: searchTerm,
+          minPrice: price.min,
+          maxPrice: price.max,
+          pageSize: 10,
+        },
       });
-      if (response.data.success === true) {
+      if (response.data.isSuccess === true) {
         return response.data.data;
       } else {
         toast.error(response.data.message);
@@ -55,7 +68,8 @@ class ProductService {
     }
   }
 
-  static async getTotalPages(page: number, searchTerm: string) {
+  static async getTotalPages(page: number, searchTerm: string, price: any) {
+    console.log(price);
     return 40;
     try {
       const response = await axios.get(`${API_URL}/Products/total-pages`);
@@ -69,21 +83,43 @@ class ProductService {
     }
   }
 
-  static async createProduct(ProductData: Product) {
-    toast.success(
-      `Created Product with name: ${ProductData.name} and category: ${ProductData.category}`
-    );
-    return;
+  static async createProduct(ProductData: any) {
     try {
-      const response = await axios.post(`${API_URL}/Products`, ProductData);
-      if (response.data.success !== true) {
-        return response.data.data;
-      } else {
-        toast.error(response.data.message);
+      delete axios.defaults.headers.common["Authorization"];
+      const formData = new FormData();
+      formData.append("file", ProductData.picture[0]);
+      formData.append("upload_preset", "ml_default");
+      console.log(ProductData.category);
+      console.log(formData);
+      try {
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dulapxpnp/image/upload",
+          formData
+        );
+        ProductData.image = response.data.secure_url;
+        ProductData.categoryId = ProductData.category;
+      } catch (error) {
+        toast.error("Error Images");
+        return;
       }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      try {
+        const response = await axios.post(
+          `${API_URL}/CreateProductByAdmin`,
+          ProductData
+        );
+        console.log(response);
+        if (response.data.isSuccess === true) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        toast.error("Something went wrong");
+      }
+    } catch (error) {}
   }
 
   static async deleteProduct(ProductId: string) {
@@ -103,16 +139,20 @@ class ProductService {
   }
 
   static async updateProduct(ProductData: Product) {
-    toast.success(
-      `Updated Product with ID: ${ProductData.id} with new category ${ProductData.category}}`
-    );
-    return;
     try {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
       const response = await axios.put(
-        `${API_URL}/Products/${ProductData.id}`,
-        ProductData
+        `${API_URL}/UpdateProductByAdmin`,
+        ProductData,
+        {
+          params: {
+            productID: ProductData.id,
+          },
+        }
       );
-      if (response.data.success !== true) {
+      if (response.data.isSuccess === true) {
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -139,10 +179,14 @@ class ProductService {
   }
 
   static async getProductById(ProductId: string) {
-    return product;
     try {
-      const response = await axios.get(`${API_URL}/Products/${ProductId}`);
-      if (response.data.success !== true) {
+      const response = await axios.get(`${API_URL}/GetProductByID`, {
+        params: {
+          id: ProductId,
+        },
+      });
+      if (response.data.isSuccess === true) {
+        console.log(response.data.data);
         return response.data.data;
       } else {
         toast.error(response.data.message);
@@ -151,19 +195,8 @@ class ProductService {
       toast.error("Something went wrong");
     }
   }
-  static async postPickStaffProduct(ProductId: string, staffId: string) {
-    toast.success(`Pick staff id ${staffId} for Product id ${ProductId}`);
+  static async updateStatus(ProductId: string, newStatus: number) {
     return;
-    try {
-      const response = await axios.post(`${API_URL}/Products/`);
-      if (response.data.success !== true) {
-        return response.data.data;
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
   }
 }
 

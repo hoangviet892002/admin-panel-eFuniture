@@ -25,8 +25,7 @@ const MyForm: React.FC<FormProps> = ({ fields, onSubmit }) => {
       [name]: value,
     }));
 
-    // Xử lý chọn hình ảnh
-    if (name === "image" && value instanceof FileList && value.length > 0) {
+    if (value instanceof FileList && value.length > 0) {
       const fileURL = URL.createObjectURL(value[0]);
       setSelectedImages((prevImages) => ({
         ...prevImages,

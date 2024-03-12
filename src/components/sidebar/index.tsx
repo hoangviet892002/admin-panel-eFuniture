@@ -19,6 +19,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CategoryIcon from "@mui/icons-material/Category";
 import ContactsIcon from "@mui/icons-material/Contacts";
+import HouseIcon from "@mui/icons-material/House";
 import { Link, useLocation } from "react-router-dom";
 import { AuthService } from "../../service";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +35,11 @@ const menuItems = [
     text: "Product",
     icon: <ProductionQuantityLimitsIcon />,
     path: "/products",
+  },
+  {
+    text: "Inventory",
+    icon: <HouseIcon />,
+    path: "/inventory",
   },
   {
     text: "Contact",

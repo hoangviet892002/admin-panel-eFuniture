@@ -97,9 +97,7 @@ class ContactService {
     idCustomer: string,
     item: any[],
     title: string,
-    description: string,
-    value: string,
-    pay: string
+    description: string
   ) {
     console.log(item);
     console.log(title);
@@ -164,77 +162,7 @@ class ContactService {
       toast.error("Something went wrong");
     }
   }
-  static async updateRole(id: string, newRole: number) {
-    toast.success(`Update role id ${id} with new role id ${newRole}`);
-    return;
-    try {
-      const response = await axios.put(`${API_URL}/Contacts/${id}/status`);
-      if (response.data.success !== true) {
-        return response.data.data;
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  }
-  static async addMoney(id: string, amount: number) {
-    toast.success(`Add  id ${id} ${amount} dong`);
-    return;
-    try {
-      const response = await axios.put(`${API_URL}/Contacts/${id}/addmoney`);
-      if (response.data.success !== true) {
-        return response.data.data;
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  }
-  static async subtractMoney(id: string, amount: number) {
-    toast.success(`SubtractMoney  id ${id} ${amount} dong`);
-    return;
-    try {
-      const response = await axios.put(`${API_URL}/Contacts/${id}/addmoney`);
-      if (response.data.success !== true) {
-        return response.data.data;
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  }
-  static async getStaffForAppoinment(
-    appointmentData: Appointment,
-    currentPage: number
-  ) {
-    return initialContacts;
-    try {
-      const response = await axios.put(`${API_URL}/Contacts/getstaff/`);
-      if (response.data.success !== true) {
-        return response.data.data;
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  }
-  static async getTotalPageStaffForAppoinment(appointmentData: Appointment) {
-    return 40;
-    try {
-      const response = await axios.put(`${API_URL}/Contacts/getstaff/`);
-      if (response.data.success !== true) {
-        return response.data.data;
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  }
+
   static async getContactStatus(orderId: string) {
     return initialStatus;
   }

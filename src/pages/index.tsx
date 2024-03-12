@@ -21,6 +21,10 @@ import OrderDetailPage from "./orderDetail";
 import ContactDetailPages from "./contactDetail";
 import CreateContactPages from "./createContact";
 import CreateContactFormPages from "./createContactForm";
+import AddAccountPage from "./add-account";
+import InventoryPage from "./inventory";
+import AddInventoryPage from "./add-inventory";
+import InventoryDetailPage from "./inventoryDetail";
 export {
   HomePage,
   LoginPage,
@@ -45,4 +49,8 @@ export {
   ContactDetailPages,
   CreateContactPages,
   CreateContactFormPages,
+  AddAccountPage,
+  InventoryPage,
+  AddInventoryPage,
+  InventoryDetailPage,
 };

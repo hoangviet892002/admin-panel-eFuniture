@@ -2,18 +2,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Category } from "../interface";
 
-const API_URL = "api";
+const API_URL = process.env.REACT_APP_API + `/Category`;
 
-const initialCategory: Category[] = [
-  {
-    id: "5",
-    name: "Giường",
-  },
-  {
-    id: "67",
-    name: "Ghế",
-  },
-];
+const initialCategory: Category[] = [];
 
 const category: Category = {
   id: "5",
@@ -22,65 +13,46 @@ const category: Category = {
 
 class CategoryService {
   static async getCategories() {
-    return initialCategory; // Mocked data for demonstration
     try {
-      const response = await axios.get(`${API_URL}/Categorys`, {
-        // params: { page },
-      });
-      if (response.data.success === true) {
+      delete axios.defaults.headers.common["Authorization"];
+      const response = await axios.get(`${API_URL}/GetCategories`, {});
+      if (response.data.isSuccess === true) {
         return response.data.data;
       } else toast.error(response.data.message);
     } catch (error) {
       toast.error("Something error");
     }
-  }
-  static async getCategorysByPage(page: number, searchName: string) {
-    return initialCategory; // Mocked data for demonstration
-    try {
-      const response = await axios.get(`${API_URL}/Categorys`, {
-        params: { page },
-      });
-      if (response.data.success === true) {
-        return response.data.data;
-      } else toast.error(response.data.message);
-    } catch (error) {
-      toast.error("Something error");
-    }
-  }
-
-  static async getTotalPages(searchName: string) {
-    return 10; // Mocked data for demonstration
-    try {
-      const response = await axios.get(`${API_URL}/Categorys/total-pages`);
-      if (response.data.success === true) {
-        return response.data.data;
-      } else toast.error(response.data.message);
-    } catch (error) {
-      toast.error("Something error");
-    }
+    return initialCategory;
   }
 
   static async createCategory(CategoryData: Category) {
-    toast.success(`Category placed for ${CategoryData.name}`);
-    return; // Mocked success response
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${localStorage.getItem("accessToken")}`;
     try {
-      const response = await axios.post(`${API_URL}/Categorys`, CategoryData);
-      if (response.data.success !== true) {
+      const response = await axios.post(`${API_URL}/CreateCategory`, {
+        name: CategoryData.name,
+      });
+      if (response.data.isSuccess !== true) {
         toast.error(response.data.message);
-      } else return response.data.data;
+      } else toast.success(response.data.message);
     } catch (error) {
       toast.error("Something error");
     }
   }
 
   static async deleteCategory(CategoryId: string) {
-    toast.success(`Category id ${CategoryId} canceled`);
-    return 0; // Mocked success response
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${localStorage.getItem("accessToken")}`;
     try {
-      const response = await axios.delete(`${API_URL}/Categorys/${CategoryId}`);
-      if (response.data.success !== true) {
+      const response = await axios.put(`${API_URL}/SoftRemoveCategory`, null, {
+        params: {
+          categoryId: CategoryId,
+        },
+      });
+      if (response.data.isSuccess === true) {
         toast.success(response.data.message);
-        return response.data.data;
       } else toast.error(response.data.message);
     } catch (error) {
       toast.error("Something error to delete");
@@ -88,30 +60,24 @@ class CategoryService {
   }
 
   static async updateCategory(id: string, name: string) {
-    toast.success(`Category id ${id} updated`);
-    return; // Mocked success response
-    // try {
-    //   const response = await axios.put(
-    //     `${API_URL}/Categorys/${CategoryData.id}`,
-    //     CategoryData
-    //   );
-    //   if (response.data.success !== true) {
-    //     toast.error(response.data.message);
-    //   } else return response.data.data;
-    // } catch (error) {
-    //   toast.error("Something error");
-    // }
-  }
-
-  static async getCategoryById(CategoryId: string) {
-    return category; // Mocked data for demonstration
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${localStorage.getItem("accessToken")}`;
     try {
-      const response = await axios.get(`${API_URL}/Categorys/${CategoryId}`);
-      if (response.data.success !== true) {
-        return response.data.data;
-      } else toast.error(response.data.message);
+      const response = await axios.put(
+        `${API_URL}/UpdateCategory`,
+        { name: name },
+        {
+          params: {
+            categoryId: id,
+          },
+        }
+      );
+      if (response.data.isSuccess !== true) {
+        toast.error(response.data.message);
+      } else toast.success(response.data.message);
     } catch (error) {
-      toast.error("Something error");
+      toast.error("Something error!!!");
     }
   }
 }

@@ -20,6 +20,7 @@ import {
   AccountService,
   CategoryService,
   ContactService,
+  ImportService,
   ProductService,
 } from "../../service";
 import { FormatNumber } from "../../helpers";
@@ -30,21 +31,8 @@ interface Item {
   price: number;
 }
 const CreateContactFormPages = () => {
-  const initialAccounts: Account = {
-    id: "",
-    name: "",
-    email: "",
-    password: "",
-    address: "",
-    wallet: 0,
-    roles: "",
-    dateOfBird: "",
-    gender: "",
-    phoneNumber: "",
-    lockoutEnd: "",
-  };
   const initialCategory: Category = {
-    id: "none",
+    id: "",
     name: "",
   };
   const initialFormData = {
@@ -53,7 +41,7 @@ const CreateContactFormPages = () => {
   };
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [Account, setAccount] = useState<Account>(initialAccounts);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -65,14 +53,13 @@ const CreateContactFormPages = () => {
   const [formData, setFormData] = useState(initialFormData);
 
   const [value, setValue] = useState<number>(0);
-  const [pay, setPay] = useState<number>(0);
+
   useEffect(() => {
     const totalValue = item.reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
     setValue(totalValue);
-    setPay(value / 2);
   }, [item]);
   const handlePickItem = (idProduct: string) => {
     const product = products.find((product) => product.id === idProduct);
@@ -106,14 +93,18 @@ const CreateContactFormPages = () => {
     const response = await CategoryService.getCategories();
     setCategories(response);
   };
+  const price = {
+    min: 0,
+    max: 10000000000,
+  };
   const fetchProducts = async () => {
     const response = await ProductService.getProductsByPage(
       currentPage,
       searchTerm,
       selectedCategory.id,
-      2
+      price
     );
-    setProducts(response);
+    setProducts(response.items);
   };
   useEffect(() => {
     setLoading(true);
@@ -127,19 +118,10 @@ const CreateContactFormPages = () => {
     fetchProducts();
     setLoading(false);
   }, [searchTerm, currentPage, selectedCategory]);
-  const { id } = useParams();
 
-  const fetchAccount = async () => {
-    try {
-      const response = await AccountService.getAccountById(`${id}`);
-      setAccount(response);
-    } catch (error) {
-      console.error("Failed toget Account ", error);
-    }
-  };
   useEffect(() => {
     setLoading(true);
-    fetchAccount();
+
     setLoading(false);
   }, []);
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,10 +165,7 @@ const CreateContactFormPages = () => {
     const updatedItems = item.filter((_, i) => i !== index);
     setItem(updatedItems);
   };
-  const fieldForm = [
-    { label: "Tiêu đề", name: "title" },
-    { label: "Nội dung", name: "description" },
-  ];
+  const fieldForm = [{ label: "Tiêu đề", name: "title" }];
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -195,19 +174,12 @@ const CreateContactFormPages = () => {
     }));
   };
   const handleSubmit = () => {
-    ContactService.createContact(
-      `${id}`,
-      item,
-      formData.title,
-      formData.description
-    );
-    console.log(formData);
+    ImportService.createImport(item, formData.title);
   };
   return (
     <Box sx={{ display: "flex" }}>
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <div>{Account.name}</div>
         <TextField
           label="Tìm kiếm sản phẩm"
           variant="outlined"
@@ -235,7 +207,6 @@ const CreateContactFormPages = () => {
           <Loading />
         ) : (
           <>
-            <TextField value={Account.name} label="Khách hàng" />
             <CustomTable columns={columns} data={products} />
             <Pagination
               total={totalPages}
@@ -304,7 +275,7 @@ const CreateContactFormPages = () => {
               fullWidth
               style={{ marginBottom: "20px" }}
             />
-            <TextField value={pay} label="Trả trước" fullWidth />
+
             <Button
               type="submit"
               fullWidth

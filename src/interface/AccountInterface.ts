@@ -1,9 +1,13 @@
 export interface Account {
   id: string;
   name: string;
-  email: string;
-  password: string;
-  wallet: number;
+  dateOfBird: string;
+  gender: string;
   address: string;
-  role: number;
+  wallet: number;
+  roles: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  lockoutEnd: string;
 }
