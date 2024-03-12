@@ -6,22 +6,19 @@ import { StatusGraph } from "../../helpers";
 const statusGraph = new StatusGraph();
 statusGraph.addEdge(1, 2);
 statusGraph.addEdge(1, 3);
+statusGraph.addEdge(1, 7);
 statusGraph.addEdge(2, 3);
-statusGraph.addEdge(2, 6);
-statusGraph.addEdge(3, 2);
-statusGraph.addEdge(3, 6);
 statusGraph.addEdge(2, 4);
-statusGraph.addEdge(4, 5);
-statusGraph.addEdge(5, 6);
+statusGraph.addEdge(2, 7);
+statusGraph.addEdge(3, 2);
+statusGraph.addEdge(3, 5);
 
 const statusLabels: Record<number, string> = {
   1: "Chuẩn bị bắt đầu",
   2: "Đang tiến hành",
   3: "Trì hoãn",
   4: "Hoàn thiện",
-  5: "Đã bàn giao",
-  6: "Đóng dự án",
-  7: "Bị hủy",
+  5: "Bị hủy",
 };
 
 const initialData = [

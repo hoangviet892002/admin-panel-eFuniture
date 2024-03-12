@@ -39,67 +39,47 @@ const CategoryPage = () => {
     },
   ];
   const [loading, setLoading] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
+  const [load, setLoad] = useState<boolean>(false);
+
   const [categories, setCategories] = useState<Category[]>([]);
-  const fetchTotalPages = async () => {
-    const response = await CategoryService.getTotalPages(searchTerm);
-    setTotalPages(response);
-  };
+  useEffect(() => {
+    setLoading(true);
+    fetchCategories();
+    setLoading(false);
+  }, [load]);
   const fetchCategories = async () => {
     try {
-      const response = await CategoryService.getCategorysByPage(
-        currentPage,
-        searchTerm
-      );
+      const response = await CategoryService.getCategories();
       setCategories(response);
     } catch (error) {
       console.error("Failed to fetch categories");
     }
   };
   const fetchCategoryDelete = async (Id: string) => {
-    const response = await CategoryService.deleteCategory(Id);
+    await CategoryService.deleteCategory(Id);
   };
   const handleSubmit = async (values: Category) => {
     setLoading(true);
-
-    CategoryService.createCategory(values);
-    fetchTotalPages();
+    await CategoryService.createCategory(values);
     fetchCategories();
     setLoading(false);
-  };
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-  const handleEdit = (id: string, name: string) => {
-    setLoading(true);
-    CategoryService.updateCategory(id, name);
-    fetchCategories();
-    setLoading(false);
+    setLoad(!load);
   };
 
-  const handleDelete = (id: string) => {
+  const handleEdit = async (id: string, name: string) => {
     setLoading(true);
-    fetchCategoryDelete(id);
-    fetchTotalPages();
-    fetchCategories();
-    if (categories.length === 0 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      fetchTotalPages();
-      fetchCategories();
-    }
+    await CategoryService.updateCategory(id, name);
     setLoading(false);
+    setLoad(!load);
   };
-  useEffect(() => {
+
+  const handleDelete = async (id: string) => {
     setLoading(true);
-    fetchTotalPages();
-    fetchCategories();
+    await fetchCategoryDelete(id);
     setLoading(false);
-  }, [currentPage, searchTerm]);
+    setLoad(!load);
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <SidebarMenu />
@@ -114,22 +94,12 @@ const CategoryPage = () => {
             <MyForm fields={AddFields} onSubmit={handleSubmit} />
           </>
         )}
-        <TextField
-          label="Tìm kiếm category"
-          variant="outlined"
-          onChange={handleSearchChange}
-          style={{ marginLeft: 20 }}
-        />
+
         {loading ? (
           <Loading />
         ) : (
           <>
             <CustomTable columns={columns} data={categories} />
-            <Pagination
-              total={totalPages}
-              selected={currentPage}
-              onChange={handlePageChange}
-            />
           </>
         )}
       </Box>

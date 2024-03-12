@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { FormField, MyForm, SidebarMenu } from "../../components";
+import { FormField, Loading, MyForm, SidebarMenu } from "../../components";
 import { Typography, Box } from "@mui/material";
 import { Category, Product } from "../../interface";
 import { CategoryService, ProductService } from "../../service";
@@ -30,13 +30,14 @@ const AddProductPage: React.FC = () => {
   ];
 
   const handleSubmit = async (values: Product) => {
-    ProductService.createProduct(values);
+    setLoading(true);
+    await ProductService.createProduct(values);
+    setLoading(false);
   };
   const fetchCategories = async () => {
     setLoading(true);
     const response = await CategoryService.getCategories();
     setCategories(response);
-
     setLoading(false);
   };
   useEffect(() => {
@@ -60,8 +61,11 @@ const AddProductPage: React.FC = () => {
             Add Product
           </Typography>
         </div>
-
-        <MyForm fields={AddProductFields} onSubmit={handleSubmit} />
+        {loading ? (
+          <Loading />
+        ) : (
+          <MyForm fields={AddProductFields} onSubmit={handleSubmit} />
+        )}
       </Box>
     </Box>
   );

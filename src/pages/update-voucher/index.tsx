@@ -8,37 +8,44 @@ import { VoucherService } from "../../service";
 import { useParams } from "react-router";
 interface Voucher {
   id: string;
-  name: string;
+  voucherName: string;
   startDate: string;
   endDate: string;
   percent: number;
-  maxUse: number;
+  number: number;
+  minimumOrderValue: number;
+  maximumDiscountAmount: number;
 }
 interface Field<T> {
   id: keyof T;
   label: string;
-  type: "string" | "number" | "image";
+  type: "string" | "number" | "image" | "date";
 }
 
 const initialVouchers: Voucher = {
   id: "",
-  name: "",
+  voucherName: "",
   startDate: "",
   endDate: "",
   percent: 0,
-  maxUse: 0,
+  number: 0,
+  minimumOrderValue: 0,
+  maximumDiscountAmount: 0,
 };
 
 const UpdateVoucherPages = () => {
+  const [load, setLoad] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [Voucher, setVoucher] = useState<Voucher>(initialVouchers);
   const { id } = useParams();
   const fields: Field<Voucher>[] = [
-    { id: "name", label: "Tên Voucher", type: "string" },
-    { id: "startDate", label: "Ngày bắt đầu", type: "string" },
-    { id: "endDate", label: "Ngày kết thúc", type: "string" },
-    { id: "maxUse", label: "Số lần sử dụng", type: "string" },
-    { id: "percent", label: "Giá trị sử dụng (%)", type: "string" },
+    { id: "voucherName", label: "Tên Voucher", type: "string" },
+    { id: "startDate", label: "Ngày bắt đầu", type: "date" },
+    { id: "endDate", label: "Ngày kết thúc", type: "date" },
+    { id: "number", label: "Số lần sử dụng", type: "number" },
+    { id: "percent", label: "Giá trị sử dụng (%)", type: "number" },
+    { id: "minimumOrderValue", label: "Đơn hàng tối thiểu", type: "number" },
+    { id: "maximumDiscountAmount", label: "Đơn hàng tối đa", type: "number" },
   ];
   const fetchVoucher = async () => {
     setLoading(true);
@@ -49,12 +56,13 @@ const UpdateVoucherPages = () => {
   };
   useEffect(() => {
     fetchVoucher();
-  }, []);
+  }, [load]);
 
   const handleSave = async (updatedVoucher: Voucher) => {
     setLoading(true);
-    VoucherService.updateVoucher(updatedVoucher);
+    await VoucherService.updateVoucher(updatedVoucher);
     setLoading(false);
+    setLoad(!load);
   };
 
   return (
@@ -70,7 +78,7 @@ const UpdateVoucherPages = () => {
           <ObjectUpdateForm
             data={Voucher}
             fields={fields}
-            onSave={() => handleSave(Voucher)}
+            onSave={handleSave}
           />
         )}
       </Box>

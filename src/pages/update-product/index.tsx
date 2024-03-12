@@ -14,30 +14,34 @@ interface Field<T> {
   options?: Array<{ label: string; value: string | number }>;
 }
 
-const initalProduct: Product = {
-  category: 0,
+const initalProduct = {
+  categoryId: "",
   description: "",
   id: "",
-  img: "",
+  image: "",
   name: "",
   price: 0,
-  quantity: 0,
+  inventoryQuantity: 0,
+  status: 0,
+  categoryName: "",
 };
 
 const UpdateProductPages = () => {
   const { id } = useParams();
+  const [load, setLoad] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [Product, setProduct] = useState<Product>(initalProduct);
+  const [product, setProduct] = useState(initalProduct);
   const [categories, setCategories] = useState<Category[]>([]);
   const [typeOptions, setTypeOptions] = useState<
     { label: string; value: string }[]
   >([]);
   const fields: Field<Product>[] = [
     { id: "name", label: "Tên Sản Phẩm", type: "string" },
+    { id: "description", label: "Mô tả", type: "string" },
     { id: "price", label: "Giá", type: "number" },
-    { id: "img", label: "Ảnh", type: "image" },
+    { id: "image", label: "Ảnh", type: "image" },
     {
-      id: "category",
+      id: "categoryId",
       type: "select",
       label: "Category",
       options: typeOptions,
@@ -54,15 +58,16 @@ const UpdateProductPages = () => {
 
   const handleSave = async (updatedProduct: Product) => {
     setLoading(true);
-    ProductService.updateProduct(updatedProduct);
+    await ProductService.updateProduct(updatedProduct);
     setLoading(false);
+    setLoad(!load);
   };
   useEffect(() => {
     setLoading(true);
     fetchProduct();
     fetchCategory();
     setLoading(false);
-  }, []);
+  }, [load]);
   useEffect(() => {
     const newTypeOptions = categories.map((category) => ({
       label: category.name,
@@ -83,7 +88,7 @@ const UpdateProductPages = () => {
           <Loading />
         ) : (
           <ObjectUpdateForm
-            data={Product}
+            data={product}
             fields={fields}
             onSave={handleSave}
           />

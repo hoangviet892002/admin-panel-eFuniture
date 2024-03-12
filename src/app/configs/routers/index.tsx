@@ -25,6 +25,10 @@ import {
   ContactDetailPages,
   CreateContactPages,
   CreateContactFormPages,
+  AddAccountPage,
+  InventoryPage,
+  AddInventoryPage,
+  InventoryDetailPage,
 } from "../../../pages";
 import Protected from "./Protected";
 import { AuthService } from "../../../service";
@@ -42,6 +46,33 @@ const Routers = () => {
               </Protected>
             }
           />
+          <Route path="inventory">
+            <Route
+              path=""
+              element={
+                <Protected>
+                  <InventoryPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="add"
+              element={
+                <Protected>
+                  <AddInventoryPage />
+                </Protected>
+              }
+            />
+            <Route
+              path=":id"
+              element={
+                <Protected>
+                  <InventoryDetailPage />
+                </Protected>
+              }
+            />
+          </Route>
+
           <Route
             path="categories"
             element={
@@ -94,6 +125,14 @@ const Routers = () => {
               element={
                 <Protected>
                   <AccountPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="add"
+              element={
+                <Protected>
+                  <AddAccountPage />
                 </Protected>
               }
             />

@@ -8,6 +8,8 @@ import type { Contact } from "./ContactInterface";
 import type { Status } from "./StatusInterface";
 import type { Item } from "./ItemInterface";
 import type { OrderProcessing } from "./OrderProcessing";
+import type { Import } from "./ImportInterface";
+import type { ImportDetail } from "./ImportDetailInterface";
 
 export type {
   Voucher,
@@ -20,4 +22,6 @@ export type {
   Status,
   Item,
   OrderProcessing,
+  Import,
+  ImportDetail,
 };

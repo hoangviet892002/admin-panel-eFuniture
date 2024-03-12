@@ -1,4 +1,12 @@
-import { Box, Typography, TextField } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Select,
+  SelectChangeEvent,
+  MenuItem,
+} from "@mui/material";
 import { useState, useEffect } from "react";
 import {
   CustomTable,
@@ -13,31 +21,33 @@ import { Account } from "../../interface";
 import { AccountService } from "../../service";
 import { toast } from "react-toastify";
 
-const statusGraph = new StatusGraph();
-statusGraph.addEdge(1, 2);
-statusGraph.addEdge(2, 1);
-
 const roleLabels: Record<number, string> = {
-  1: "Customer",
-  2: "Staff",
-  3: "Admin",
+  1: "Admin",
+  2: "Customer ",
+  3: "Staff ",
+  4: "DeliveryStaff",
 };
 
 const AccountPage = () => {
   const navigate = useNavigate();
+  const [load, setLoad] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectRole, setSelectRole] = useState<number>(1);
+  const handleRoleChange = (event: SelectChangeEvent<number>) => {
+    // Directly use the string value from the event and update the selectRole state
+    setSelectRole(event.target.value as number);
+  };
 
   const columns = [
     { id: "name", label: "Tên ", minWidth: 170 },
     { id: "email", label: "Email", minWidth: 100 },
-    { id: "password", label: "Mật khẩu", minWidth: 100 },
+    { id: "gender", label: "Giới tính", minWidth: 100 },
     { id: "address", label: "Địa chỉ", minWidth: 100 },
     { id: "wallet", label: "Số dư", minWidth: 100 },
     {
-      id: "role",
+      id: "roles",
       label: "Role",
       minWidth: 100,
-      format: (value: number) => roleLabels[value] || "Unknown",
     },
     {
       id: "id",
@@ -51,48 +61,51 @@ const AccountPage = () => {
         />
       ),
     },
+    {
+      id: "id",
+      label: "Ban",
+      minWidth: 170,
+      format: (value: string, rowData: Account) => {
+        if (rowData.lockoutEnd === null) {
+          return <Button onClick={() => handleBan(value)}>Ban</Button>;
+        } else {
+          return <Button onClick={() => handleBan(value)}>Un Ban</Button>;
+        }
+      },
+    },
   ];
+  const handleBan = async (idAccount: string) => {
+    setLoad(true);
+    await AccountService.banUser(idAccount);
+    setCurrentPage(currentPage);
+    setLoad(false);
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
-  const fetchTotalPages = async () => {
-    const response = await AccountService.getTotalPages(searchTerm);
-    setTotalPages(response);
-  };
   const fetchAccounts = async () => {
     try {
       const response = await AccountService.getAccountsByPage(
+        selectRole,
         currentPage,
         searchTerm
       );
-      setAccounts(response);
+
+      setAccounts(response.items);
+      setTotalPages(response.totalPagesCount);
     } catch (error) {
       console.error("Failed to fetch vouchers");
     }
   };
-  const fetchAccountsDelete = async (Id: string) => {
-    try {
-      const response = await AccountService.deleteAccount(Id);
-    } catch (error) {
-      console.error("Failed to fetch delete pages", error);
-    }
-  };
-  const fetchAccountsUpdateRole = async (Id: string, newRole: number) => {
-    try {
-      AccountService.updateRole(Id, newRole);
-    } catch (error) {
-      console.error("Failed to fetch delete pages", error);
-    }
-  };
+
   useEffect(() => {
     setLoading(true);
-    fetchTotalPages();
     fetchAccounts();
     setLoading(false);
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, selectRole, load]);
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -100,27 +113,7 @@ const AccountPage = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-  const handleRoleChange = (accountId: string, newRole: number) => {
-    fetchAccountsUpdateRole(accountId, newRole);
-    fetchAccounts();
-  };
-  const handleEdit = (id: string) => {
-    console.log("Edit", id);
-    navigate(`${id}`);
-  };
 
-  const handleDelete = (id: string) => {
-    setLoading(true);
-    fetchAccountsDelete(id);
-    fetchTotalPages();
-    fetchAccounts();
-    if (accounts.length === 0 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      fetchTotalPages();
-      fetchAccounts();
-    }
-    setLoading(false);
-  };
   const handleAdd = (id: string, amount: number) => {
     setLoading(true);
     AccountService.addMoney(id, amount);
@@ -142,25 +135,40 @@ const AccountPage = () => {
         <Typography variant="h4" gutterBottom>
           Danh Sách Account
         </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            navigate("add");
+          }}
+        >
+          Tạo Account
+        </Button>
         <TextField
           label="Tìm kiếm khách hàng theo tên"
           variant="outlined"
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}
         />
+        <Select
+          labelId="role-select-label"
+          id="role-select"
+          value={selectRole ?? ""}
+          label="Role"
+          onChange={handleRoleChange}
+        >
+          {Object.entries(roleLabels).map(([key, label]) => (
+            <MenuItem key={key} value={parseInt(key)}>
+              {label}
+            </MenuItem>
+          ))}
+        </Select>
+
         {loading ? (
           <Loading />
         ) : (
           <>
-            <CustomTable
-              columns={columns}
-              data={accounts}
-              onStatusChange={handleRoleChange}
-              statusLabels={roleLabels}
-              statusGraph={statusGraph}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <CustomTable columns={columns} data={accounts} />
             <Pagination
               total={totalPages}
               selected={currentPage}

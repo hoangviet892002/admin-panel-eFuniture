@@ -7,6 +7,7 @@ import ProductService from "./ProductService";
 import ContactService from "./ContactService";
 import OrderService from "./OrderService";
 import OrderProcessingService from "./OrderProcessingService";
+import ImportService from "./ImportService";
 export {
   OrderService,
   AuthService,
@@ -17,4 +18,5 @@ export {
   ProductService,
   ContactService,
   OrderProcessingService,
+  ImportService,
 };

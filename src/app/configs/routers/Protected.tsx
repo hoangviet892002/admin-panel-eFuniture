@@ -10,10 +10,12 @@ interface ProtectedProps {
 const Protected: React.FC<ProtectedProps> = ({ children }) => {
   const [isLoggedIn, setisLoggedIn] = useState<boolean>(true);
   async function fetchUser() {
-    const user = await AuthService.getCurrentUser();
-    if (user === null) {
-      setisLoggedIn(false);
-    } else setisLoggedIn(true);
+    const user = localStorage.getItem("user");
+    console.log(user);
+
+    if (user) {
+      setisLoggedIn(true);
+    } else setisLoggedIn(false);
   }
 
   useEffect(() => {

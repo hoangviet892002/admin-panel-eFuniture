@@ -16,7 +16,7 @@ import {
 interface Field<T> {
   id: keyof T;
   label: string;
-  type: "string" | "number" | "image" | "select";
+  type: "string" | "number" | "image" | "select" | "date";
   options?: Array<{ label: string; value: string | number }>;
   name?: string;
 }
@@ -107,6 +107,25 @@ function ObjectUpdateForm<T>({
               </Card>
             )}
           </Box>
+        );
+      case "date":
+        return (
+          <TextField
+            key={String(field.id)}
+            type="date"
+            margin="normal"
+            required
+            fullWidth
+            id={String(field.id)}
+            label={field.label}
+            name={String(field.id)}
+            value={(formData[field.id as keyof T] || "") as string}
+            onChange={(e) => handleChange(field.id, e.target.value)}
+            variant="outlined"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
         );
       case "select":
         return (
