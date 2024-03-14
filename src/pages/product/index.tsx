@@ -30,8 +30,8 @@ statusGraph.addEdge(3, 1);
 statusGraph.addEdge(3, 2);
 
 const statusLabels: Record<number, string> = {
-  1: "Active",
-  2: "Inactive",
+  1: "Inactive",
+  2: "Active",
   3: "Processing",
 };
 const ProductPage = () => {
@@ -51,6 +51,7 @@ const ProductPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedPrice, setSelectedPrice] = useState(priceOptions[0]);
+  const [load, setLoad] = useState<boolean>(false);
 
   const [totalPages, setTotalPages] = useState<number>(1);
   const [selectedCategory, setSelectedCategory] =
@@ -86,7 +87,7 @@ const ProductPage = () => {
     fetchProducts();
 
     setLoading(false);
-  }, [searchTerm, currentPage, selectedCategory, selectedPrice]);
+  }, [searchTerm, currentPage, selectedCategory, selectedPrice, load]);
   const handleCategoryChange = (event: SelectChangeEvent<string>) => {
     if (event.target.value === "") {
       setSelectedCategory(initialCategory);
@@ -103,10 +104,11 @@ const ProductPage = () => {
     navigate(`${productId}`);
   };
 
-  const handleStatusChange = (productId: string, newStatus: number) => {
+  const handleStatusChange = async (productId: string, newStatus: number) => {
     setLoading(true);
-    ProductService.updateStatus(productId, newStatus);
+    await ProductService.updateStatus(productId, newStatus);
     setLoading(false);
+    setLoad(!load);
   };
 
   const navigateToAddProductPage = () => {

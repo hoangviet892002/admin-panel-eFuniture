@@ -38,7 +38,7 @@ const AddVoucherPage: React.FC = () => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
-      VoucherService.createVoucher(values);
+      await VoucherService.createVoucher(values);
     } catch (error) {}
     setLoading(false);
   };

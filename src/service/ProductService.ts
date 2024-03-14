@@ -196,7 +196,25 @@ class ProductService {
     }
   }
   static async updateStatus(ProductId: string, newStatus: number) {
-    return;
+    try {
+      const response = await axios.post(
+        `${API_URL}/UpdateProductStatus`,
+        null,
+        {
+          params: {
+            ProductId: ProductId,
+            newStatus: newStatus,
+          },
+        }
+      );
+      if (response.data.isSuccess === true) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   }
 }
 

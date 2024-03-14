@@ -33,7 +33,7 @@ const AppointmentDetailsPage = () => {
   const { id } = useParams();
   const [appointment, setAppointment] =
     useState<Appointment>(initialAppointment);
-  const [staff, setStaff] = useState<Account[]>([]);
+  const [staff, setStaff] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -47,10 +47,9 @@ const AppointmentDetailsPage = () => {
     { id: "description", label: "Mô tả yêu cầu", type: "string" },
   ];
   const columns = [
-    { id: "name", label: "Tên ", minWidth: 170 },
-    { id: "email", label: "Email", minWidth: 100 },
+    { id: "staffName", label: "Tên ", minWidth: 170 },
     {
-      id: "id",
+      id: "staffId",
       label: "Action",
       minWidth: 170,
       format: (value: string) => (
@@ -79,10 +78,7 @@ const AppointmentDetailsPage = () => {
     setTotalPages(response);
   };
   const fetchStaffs = async () => {
-    const response = await AccountService.getStaffForAppoinment(
-      appointment,
-      currentPage
-    );
+    const response = await AppointmentService.getStaff(`${id}`);
     setStaff(response);
   };
   useEffect(() => {
@@ -98,10 +94,10 @@ const AppointmentDetailsPage = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-  const handlerPickStaff = (idAppointment: string, idStaff: string) => {
+  const handlerPickStaff = async (idAppointment: string, idStaff: string) => {
     setLoadingAppointment(true);
     setLoadingStaff(true);
-    AppointmentService.postPickStaffAppointment(idAppointment, idStaff);
+    await AppointmentService.postPickStaffAppointment(idAppointment, idStaff);
     fetchAppointment();
     fetchTotalPages();
     fetchStaffs();
@@ -117,12 +113,7 @@ const AppointmentDetailsPage = () => {
         ) : (
           <ObjectDetailsDisplay data={appointment} fields={fields} />
         )}
-        <TextField
-          label="Tìm kiếm nhân viên theo tên"
-          variant="outlined"
-          onChange={handleSearchChange}
-          style={{ marginLeft: 20 }}
-        />
+
         {loadingStaff ? (
           <Loading />
         ) : (
