@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Item, Order, Status } from "../interface"; // Assuming you have an Order interface defined similarly to Voucher
 
-const API_URL = "api";
+const API_URL = process.env.REACT_APP_API + `/Order`;
 
 const initialOrder: Order[] = [
   {
@@ -39,12 +39,18 @@ const initialStatus: Status[] = [
 ];
 class OrderService {
   static async getOrdersByPage(page: number, searchName: string) {
-    return initialOrder; // Mocked data for demonstration
     try {
-      const response = await axios.get(`${API_URL}/orders`, {
-        params: { page },
-      });
-      if (response.data.success === true) {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.get(
+        `${API_URL}/GetOrderByFilter?PageSize=10&PageIndex=${page}&Search=${searchName}`
+      );
+      if (response.data.isSuccess === true) {
+        const result = response.data.data;
+        result.items.map((item: any) => {
+          item.status = item.statusOrder.statusCode;
+        });
         return response.data.data;
       } else toast.error(response.data.message);
     } catch (error) {
