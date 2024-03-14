@@ -33,7 +33,7 @@ const OrderPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState([]);
   useEffect(() => {}, [searchTerm, currentPage]);
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -64,10 +64,9 @@ const OrderPage = () => {
   };
 
   const columns = [
-    { id: "customerName", label: "Tên Khách Hàng", minWidth: 170 },
+    { id: "name", label: "Tên Khách Hàng", minWidth: 170 },
     { id: "address", label: "Địa Chỉ", minWidth: 170 },
-    { id: "amount", label: "Tổng đơn", minWidth: 170 },
-    { id: "pay", label: "Cần trả thêm", minWidth: 170 },
+    { id: "price", label: "Tổng đơn", minWidth: 170 },
     {
       id: "status",
       label: "Trạng Thái",
@@ -84,7 +83,7 @@ const OrderPage = () => {
       currentPage,
       searchTerm
     );
-    setOrders(response);
+    setOrders(response.items);
   };
   const fetchOrdersDelete = async (Id: string) => {
     OrderService.deleteOrder(Id);
