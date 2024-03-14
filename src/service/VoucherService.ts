@@ -71,7 +71,7 @@ class VoucherService {
         `${API_URL}/CreateVoucher`,
         voucherData
       );
-      if (response.data.isSuccess !== true) {
+      if (response.data.isSuccess === true) {
         toast.success(response.data.message);
       } else toast.error(response.data.message);
     } catch (error) {

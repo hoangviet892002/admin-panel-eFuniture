@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Appointment } from "../interface";
 
-const API_URL = "api";
+const API_URL = process.env.REACT_APP_API + `/Appointment`;
 const initialAppointments: Appointment[] = [
   {
     id: "1",
@@ -115,12 +115,33 @@ class AppointmentService {
   }
 
   static async getAppointmentById(appointmentId: string) {
-    return appointment;
     try {
       const response = await axios.get(
-        `${API_URL}/appointments/${appointmentId}`
+        `${API_URL}/GetAppointmentDetail?id=${appointmentId}`
       );
-      if (response.data.success !== true) {
+      if (response.data.isSuccess === true) {
+        response.data.data.nameCustomer = response.data.data.customerName;
+        response.data.data.phone = response.data.data.phoneNumber;
+        response.data.data.nameStaff = response.data.data.staffName;
+        response.data.data.description = response.data.data.name;
+        return response.data.data;
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  }
+  static async getStaff(appointmentId: string) {
+    try {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.get(
+        `${API_URL}/GetStaffForAppointment?appointmentID=${appointmentId}`
+      );
+      console.log(response);
+      if (response.data.isSuccess === true) {
         return response.data.data;
       } else {
         toast.error(response.data.message);
@@ -133,14 +154,12 @@ class AppointmentService {
     appointmentId: string,
     staffId: string
   ) {
-    toast.success(
-      `Pick staff id ${staffId} for appointment id ${appointmentId}`
-    );
-    return;
     try {
-      const response = await axios.post(`${API_URL}/appointments/`);
-      if (response.data.success !== true) {
-        return response.data.data;
+      const response = await axios.post(
+        `${API_URL}/PickStaffForAppointment?appointmentId=${appointmentId}&staffId=${staffId}`
+      );
+      if (response.data.isSuccess === true) {
+        toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }
