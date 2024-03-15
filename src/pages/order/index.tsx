@@ -29,6 +29,7 @@ const statusLabels: Record<number, string> = {
 
 const OrderPage = () => {
   const navigate = useNavigate();
+  const [load, setLoad] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -50,11 +51,11 @@ const OrderPage = () => {
   const handleDelete = (id: string) => {
     setLoading(true);
     fetchOrdersDelete(id);
-    fetchTotalPages();
+
     fetchOrders();
     if (orders.length === 0 && currentPage > 1) {
       setCurrentPage(currentPage - 1);
-      fetchTotalPages();
+
       fetchOrders();
     }
     setLoading(false);
@@ -74,29 +75,28 @@ const OrderPage = () => {
       format: (value: number) => statusLabels[value] || "Unknown",
     },
   ];
-  const fetchTotalPages = async () => {
-    const response = await OrderService.getTotalPages(searchTerm);
-    setTotalPages(response);
-  };
+
   const fetchOrders = async () => {
     const response = await OrderService.getOrdersByPage(
       currentPage,
       searchTerm
     );
     setOrders(response.items);
+    setTotalPages(response.totalPagesCount);
   };
   const fetchOrdersDelete = async (Id: string) => {
     OrderService.deleteOrder(Id);
   };
   const fetchOrdersUpdateStatus = async (Id: string, newStatus: number) => {
-    OrderService.updateOrderStatus(Id, newStatus);
+    await OrderService.updateOrderStatus(Id, newStatus);
+    setLoad(!load);
   };
   useEffect(() => {
     setLoading(true);
-    fetchTotalPages();
+
     fetchOrders();
     setLoading(false);
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, load]);
 
   return (
     <Box sx={{ display: "flex" }}>
