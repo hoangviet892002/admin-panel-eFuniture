@@ -1,4 +1,11 @@
-import { Box, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 import {
   ObjectDetailsDisplay,
   SidebarMenu,
@@ -10,13 +17,14 @@ import { AppointmentService, AccountService } from "../../service";
 import { Appointment, Account } from "../../interface";
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
+import { StatusGraph } from "../../helpers";
 
 interface Field<T> {
   id: keyof T;
   label: string;
   type: "string" | "number" | "image";
 }
-const initialAppointment: Appointment = {
+const initialAppointment = {
   id: "",
   nameCustomer: "",
   nameStaff: "",
@@ -25,14 +33,23 @@ const initialAppointment: Appointment = {
   date: "",
   time: "",
   description: "",
+  status: 0,
 };
+const statusGraph = new StatusGraph();
 
+statusGraph.addEdge(2, 3);
+
+const statusLabels: Record<number, string> = {
+  1: "Pending",
+  2: "Waiting",
+  3: "Done",
+  4: "Cancel",
+};
 const AppointmentDetailsPage = () => {
   const [loadingAppointment, setLoadingAppointment] = useState<boolean>(false);
   const [loadingStaff, setLoadingStaff] = useState<boolean>(false);
   const { id } = useParams();
-  const [appointment, setAppointment] =
-    useState<Appointment>(initialAppointment);
+  const [appointment, setAppointment] = useState(initialAppointment);
   const [staff, setStaff] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -91,8 +108,17 @@ const AppointmentDetailsPage = () => {
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+  const handleChange = async (event: SelectChangeEvent<number>) => {
+    setLoadingAppointment(true);
+    setLoadingStaff(true);
+    const selectedStatus = event.target.value;
+
+    await AppointmentService.updateStatus(`${id}`, selectedStatus);
+    fetchAppointment();
+    fetchTotalPages();
+    fetchStaffs();
+    setLoadingAppointment(false);
+    setLoadingStaff(false);
   };
   const handlerPickStaff = async (idAppointment: string, idStaff: string) => {
     setLoadingAppointment(true);
@@ -125,6 +151,16 @@ const AppointmentDetailsPage = () => {
               selected={currentPage}
               onChange={handlePageChange}
             />
+            <TextField value={statusLabels[appointment.status]} />
+            <Select value={appointment.status} onChange={handleChange}>
+              {statusGraph
+                .getNextStates(appointment.status)
+                .map((nextState) => (
+                  <MenuItem value={nextState}>
+                    {statusLabels ? statusLabels[nextState] : nextState}
+                  </MenuItem>
+                ))}
+            </Select>
           </>
         )}
       </Box>

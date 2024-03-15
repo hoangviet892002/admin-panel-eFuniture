@@ -29,12 +29,11 @@ const appointment: Appointment = {
 
 class AppointmentService {
   static async getAppointmentsByPage(page: number) {
-    return initialAppointments;
     try {
-      const response = await axios.get(`${API_URL}/appointments`, {
-        params: { page },
-      });
-      if (response.data.success === true) {
+      const response = await axios.get(
+        `${API_URL}/GetAppointmentPaging?page=${page - 1}&pageSize=10`
+      );
+      if (response.data.isSuccess === true) {
         return response.data.data;
       } else {
         toast.error(response.data.message);
@@ -157,6 +156,20 @@ class AppointmentService {
     try {
       const response = await axios.post(
         `${API_URL}/PickStaffForAppointment?appointmentId=${appointmentId}&staffId=${staffId}`
+      );
+      if (response.data.isSuccess === true) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  }
+  static async updateStatus(appointmentId: string, newStatus: any) {
+    try {
+      const response = await axios.post(
+        `${API_URL}/UpdateAppointmentStatus?appointmentId=${appointmentId}&newStatus=${newStatus}`
       );
       if (response.data.isSuccess === true) {
         toast.success(response.data.message);
