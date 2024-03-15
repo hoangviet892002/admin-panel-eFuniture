@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { Account, Appointment } from "../interface";
 
 const API_URL = process.env.REACT_APP_API + `/User`;
+const API_URL_MONEY = process.env.REACT_APP_API + `/Wallet`;
 
 const initialAccounts: Account[] = [];
 
@@ -180,12 +181,16 @@ class AccountService {
     }
   }
   static async addMoney(id: string, amount: number) {
-    toast.success(`Add  id ${id} ${amount} dong`);
-    return;
     try {
-      const response = await axios.put(`${API_URL}/accounts/${id}/addmoney`);
-      if (response.data.success !== true) {
-        return response.data.data;
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.post(`${API_URL_MONEY}/AddMoneyByUserId`, {
+        userId: id,
+        wallet: amount,
+      });
+      if (response.data.isSuccess === true) {
+        toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }
@@ -194,12 +199,19 @@ class AccountService {
     }
   }
   static async subtractMoney(id: string, amount: number) {
-    toast.success(`SubtractMoney  id ${id} ${amount} dong`);
-    return;
     try {
-      const response = await axios.put(`${API_URL}/accounts/${id}/addmoney`);
-      if (response.data.success !== true) {
-        return response.data.data;
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.post(
+        `${API_URL_MONEY}/SubtractMoneyByUserId`,
+        {
+          userId: id,
+          wallet: amount,
+        }
+      );
+      if (response.data.isSuccess === true) {
+        toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }

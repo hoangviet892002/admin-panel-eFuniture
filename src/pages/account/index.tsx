@@ -114,16 +114,16 @@ const AccountPage = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleAdd = (id: string, amount: number) => {
+  const handleAdd = async (id: string, amount: number) => {
     setLoading(true);
-    AccountService.addMoney(id, amount);
+    await AccountService.addMoney(id, amount);
     fetchAccounts();
     setLoading(false);
   };
 
-  const handleSubtract = (id: string, amount: number) => {
+  const handleSubtract = async (id: string, amount: number) => {
     setLoading(true);
-    AccountService.subtractMoney(id, amount);
+    await AccountService.subtractMoney(id, amount);
     fetchAccounts();
     setLoading(false);
   };

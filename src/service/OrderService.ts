@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Item, Order, Status } from "../interface"; // Assuming you have an Order interface defined similarly to Voucher
 
 const API_URL = process.env.REACT_APP_API + `/Order`;
+const API_URL_DETAIL = process.env.REACT_APP_API + `/OrderDetail`;
 
 const initialOrder: Order[] = [
   {
@@ -24,7 +25,7 @@ const order: Order = {
   amount: 100,
   pay: 20,
 };
-const initialItem: Item[] = [
+const initialItem = [
   {
     id: "2131",
     name: "Loli 1",
@@ -112,27 +113,33 @@ class OrderService {
       toast.error("Something error");
     }
   }
-  static async updateOrderStatus(orderId: string, newStatus: number) {
-    toast.success(`Order id ${orderId} updated new status ${newStatus}`);
-    return; // Mocked success response
+  static async updateOrderStatus(orderId: string, newStatus: any) {
     try {
-      const response = await axios.put(`${API_URL}/orders/`, {
-        orderId,
-        newStatus,
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.put(`${API_URL}/UpdateOrderStatus`, {
+        id: orderId,
+        statusCode: newStatus,
       });
-      if (response.data.success !== true) {
+      if (response.data.isSuccess !== true) {
         toast.error(response.data.message);
-      } else return response.data.data;
+      } else toast.success(response.data.message);
     } catch (error) {
       toast.error("Something error");
     }
   }
 
   static async getOrderById(orderId: string) {
-    return order; // Mocked data for demonstration
     try {
-      const response = await axios.get(`${API_URL}/orders/${orderId}`);
-      if (response.data.success !== true) {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.get(
+        `${API_URL}/GetOrderById?orderId=${orderId}`
+      );
+      if (response.data.isSuccess === true) {
+        response.data.data.status = response.data.data.statusOrder.statusCode;
         return response.data.data;
       } else toast.error(response.data.message);
     } catch (error) {
@@ -143,7 +150,21 @@ class OrderService {
     return initialStatus;
   }
   static async getOrderItem(orderId: string) {
-    return initialItem;
+    try {
+      const response = await axios.get(
+        `${API_URL_DETAIL}/GetOrderDetailsById?orderId=${orderId}`
+      );
+      if (response.data.isSuccess === true) {
+        console.log(response.data.data);
+        response.data.data.map((item: any) => {
+          item.id = item.orderId;
+          item.name = item.product.name;
+        });
+        return response.data.data;
+      } else toast.error(response.data.message);
+    } catch (error) {
+      toast.error("Something error");
+    }
   }
 }
 

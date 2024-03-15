@@ -1,3 +1,4 @@
 import StatusGraph from "./StatusGraph";
 import { formatNumber as FormatNumber } from "./FormatNumber";
-export { StatusGraph, FormatNumber };
+import { formatDate as FormatDate } from "./FormatDate";
+export { StatusGraph, FormatNumber, FormatDate };
