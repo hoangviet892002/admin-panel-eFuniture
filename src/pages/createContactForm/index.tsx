@@ -29,8 +29,13 @@ interface Item {
   quantity: number;
   price: number;
 }
+const priceOptions = [
+  { label: "All prices", min: "0", max: "1000000000" },
+  { label: "100 - 200", min: "100", max: "200" },
+  { label: "200 - 300", min: "200", max: "300" },
+];
 const CreateContactFormPages = () => {
-  const initialAccounts: Account = {
+  const initialAccounts = {
     id: "",
     name: "",
     email: "",
@@ -43,22 +48,27 @@ const CreateContactFormPages = () => {
     phoneNumber: "",
     lockoutEnd: "",
   };
-  const initialCategory: Category = {
-    id: "none",
+  const initialCategory = {
+    id: "",
     name: "",
   };
   const initialFormData = {
     title: "",
     description: "",
+    phoneNumber: "",
+    email: "",
+    address: "",
+    name: "",
   };
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [Account, setAccount] = useState<Account>(initialAccounts);
+  const [Account, setAccount] = useState(initialAccounts);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedPrice] = useState(priceOptions[0]);
   const [selectedCategory, setSelectedCategory] =
     useState<Category>(initialCategory);
   const [item, setItem] = useState<Item[]>([]);
@@ -72,10 +82,13 @@ const CreateContactFormPages = () => {
       0
     );
     setValue(totalValue);
-    setPay(value / 2);
   }, [item]);
+  useEffect(() => {
+    setPay(Math.floor(value / 2));
+  }, [value]);
+
   const handlePickItem = (idProduct: string) => {
-    const product = products.find((product) => product.id === idProduct);
+    const product = products.find((product: any) => product.id === idProduct);
     if (!product) return;
 
     setItem((prevItems) => {
@@ -92,8 +105,8 @@ const CreateContactFormPages = () => {
         {
           idProduct,
           quantity: 1,
-          price: product.price,
-          productName: product.name,
+          price: (product as any).price,
+          productName: (product as any).name,
         },
       ];
     });
@@ -111,9 +124,9 @@ const CreateContactFormPages = () => {
       currentPage,
       searchTerm,
       selectedCategory.id,
-      2
+      selectedPrice
     );
-    setProducts(response);
+    setProducts(response.items);
   };
   useEffect(() => {
     setLoading(true);
@@ -149,7 +162,7 @@ const CreateContactFormPages = () => {
     if (event.target.value === "") {
       setSelectedCategory(initialCategory);
     } else {
-      const category = categories.find((c) => c.id === event.target.value);
+      const category = categories.find((c: any) => c.id === event.target.value);
       setSelectedCategory(category || initialCategory);
     }
   };
@@ -186,6 +199,10 @@ const CreateContactFormPages = () => {
   const fieldForm = [
     { label: "Tiêu đề", name: "title" },
     { label: "Nội dung", name: "description" },
+    { label: "Số điện thoại", name: "phoneNumber" },
+    { label: "Email", name: "email" },
+    { label: "Địa chỉ", name: "address" },
+    { label: "Tên", name: "name" },
   ];
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -195,12 +212,7 @@ const CreateContactFormPages = () => {
     }));
   };
   const handleSubmit = () => {
-    ContactService.createContact(
-      `${id}`,
-      item,
-      formData.title,
-      formData.description
-    );
+    ContactService.createContact(`${id}`, item, formData, value, pay);
     console.log(formData);
   };
   return (
@@ -224,7 +236,7 @@ const CreateContactFormPages = () => {
           <MenuItem value="">
             <em>Không chọn</em>
           </MenuItem>
-          {categories.map((category) => (
+          {categories.map((category: any) => (
             <MenuItem key={category.id} value={category.id}>
               {category.name}
             </MenuItem>

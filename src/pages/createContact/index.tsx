@@ -1,59 +1,74 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Select,
+  SelectChangeEvent,
+  MenuItem,
+} from "@mui/material";
+import { useState, useEffect } from "react";
 import {
   CustomTable,
-  Loading,
-  Pagination,
   SidebarMenu,
+  Pagination,
+  Loading,
 } from "../../components";
+import { StatusGraph } from "../../helpers";
 
 import { useNavigate } from "react-router";
 import { Account } from "../../interface";
 import { AccountService } from "../../service";
+import { toast } from "react-toastify";
 
-const AccountPage = () => {
-  const [loading, setLoading] = useState<boolean>(false);
+const roleLabels: Record<number, string> = {
+  1: "Admin",
+  2: "Customer ",
+  3: "Staff ",
+  4: "DeliveryStaff",
+};
+
+const PickCustomerPage = () => {
   const navigate = useNavigate();
+  const [load, setLoad] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectRole] = useState(2);
+
   const columns = [
     { id: "name", label: "Tên ", minWidth: 170 },
     { id: "email", label: "Email", minWidth: 100 },
-    { id: "password", label: "Mật khẩu", minWidth: 100 },
+    { id: "gender", label: "Giới tính", minWidth: 100 },
     { id: "address", label: "Địa chỉ", minWidth: 100 },
-
     {
       id: "id",
-      label: "Action",
+      label: "Pick",
       minWidth: 170,
-      format: (value: string) => (
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          className="myForm-button"
-          onClick={() => navigate(`${value}`)}
-        >
-          Pick
-        </Button>
-      ),
+      format: (value: string) => {
+        return <Button onClick={() => navigate(`${value}`)}>Pick</Button>;
+      },
     },
   ];
+  const handleBan = async (idAccount: string) => {
+    setLoad(true);
+    await AccountService.banUser(idAccount);
+    setCurrentPage(currentPage);
+    setLoad(false);
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
-  const fetchTotalPages = async () => {
-    const response = await AccountService.getTotalPagesCustomer(searchTerm);
-    setTotalPages(response);
-  };
   const fetchAccounts = async () => {
     try {
-      const response = await AccountService.getCustomer(
+      const response = await AccountService.getAccountsByPage(
+        selectRole,
         currentPage,
         searchTerm
       );
-      setAccounts(response);
+      setAccounts(response.items);
+      setTotalPages(response.totalPagesCount);
     } catch (error) {
       console.error("Failed to fetch vouchers");
     }
@@ -61,10 +76,9 @@ const AccountPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchTotalPages();
     fetchAccounts();
     setLoading(false);
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, selectRole, load]);
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -78,14 +92,16 @@ const AccountPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Chọn khách hàng
+          Danh Sách Account
         </Typography>
+
         <TextField
           label="Tìm kiếm khách hàng theo tên"
           variant="outlined"
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}
         />
+
         {loading ? (
           <Loading />
         ) : (
@@ -102,4 +118,4 @@ const AccountPage = () => {
     </Box>
   );
 };
-export default AccountPage;
+export default PickCustomerPage;

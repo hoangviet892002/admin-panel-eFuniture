@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Contact, Appointment, Status, OrderProcessing } from "../interface";
 
-const API_URL = "api";
+const API_URL = process.env.REACT_APP_API + `/Contract`;
 const initialContacts: Contact[] = [
   {
     id: "33",
@@ -57,17 +57,19 @@ const initialItem: OrderProcessing[] = [
   },
 ];
 class ContactService {
-  static async getContactsByPage(
-    page: number,
-    searchName: string,
-    date: string
-  ) {
-    return initialContacts;
+  static async getContactsByPage(page: number) {
     try {
-      const response = await axios.get(`${API_URL}/Contacts`, {
-        params: { page, searchName },
-      });
-      if (response.data.success === true) {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.get(
+        `${API_URL}/GetContractsByPage?pageIndex=${page}&pageSize=10`
+      );
+      if (response.data.isSuccess === true) {
+        response.data.data.items.map((item: any) => {
+          item.id = item.contractID;
+          item.status = item.statusContract;
+        });
         return response.data.data;
       } else {
         toast.error(response.data.message);
@@ -96,17 +98,33 @@ class ContactService {
   static async createContact(
     idCustomer: string,
     item: any[],
-    title: string,
-    description: string
+    form: any,
+    value: number,
+    pay: number
   ) {
+    item.map((item) => {
+      item.productId = item.idProduct;
+    });
     console.log(item);
-    console.log(title);
-    toast.success(`Created Contact with id Customer: ${idCustomer}`);
-    return;
+
     try {
-      const response = await axios.post(`${API_URL}/Contacts`);
-      if (response.data.success !== true) {
-        return response.data.data;
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.post(`${API_URL}/CreateContract`, {
+        customerId: idCustomer,
+        title: form.title,
+        description: form.description,
+        value: value,
+        pay: pay,
+        phoneNumber: form.phoneNumber,
+        email: form.email,
+        address: form.address,
+        name: form.name,
+        items: item,
+      });
+      if (response.data.isSuccess === true) {
+        toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }
@@ -150,10 +168,14 @@ class ContactService {
   }
 
   static async getContactById(ContactId: string) {
-    return contact;
     try {
-      const response = await axios.get(`${API_URL}/Contacts/${ContactId}`);
-      if (response.data.success !== true) {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.get(
+        `${API_URL}/GetContractItem?contractId=${ContactId}`
+      );
+      if (response.data.isSuccess === true) {
         return response.data.data;
       } else {
         toast.error(response.data.message);

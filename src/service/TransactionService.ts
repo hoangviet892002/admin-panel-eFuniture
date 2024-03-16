@@ -8,19 +8,20 @@ class TransactionService {
     search: string,
     FromTime: string,
     ToTime: string,
-    currentPage: number
+    currentPage: number,
+    type: string
   ) {
     try {
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${localStorage.getItem("accessToken")}`;
       const response = await axios.get(
-        `${API_URL}/FilterTransaction?PageIndex=${currentPage}&PageSize=10&search=${search}&FromTime=${FromTime}&ToTime=${ToTime}`
+        `${API_URL}/FilterTransaction?PageIndex=${currentPage}&PageSize=10&Search=${search}&FromTime=${FromTime}&ToTime=${ToTime}&Type=${type}`
       );
       if (response.data.isSuccess === true) {
         console.log(response.data.data);
         return response.data.data;
-      } else toast.success(response.data.message);
+      } else toast.error(response.data.message);
     } catch (error) {
       toast.error("Something error");
     }

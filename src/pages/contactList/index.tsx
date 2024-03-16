@@ -28,7 +28,7 @@ const ContactListPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const columns = [
-    { id: "nameCustomer", label: "Khách hàng ", minWidth: 150 },
+    { id: "customerContractName", label: "Khách hàng ", minWidth: 150 },
     {
       id: "title",
       label: "Tiêu đề",
@@ -55,32 +55,21 @@ const ContactListPage = () => {
   ];
   const fetchContacts = async () => {
     try {
-      const response = await ContactService.getContactsByPage(
-        currentPage,
-        searchTerm,
-        date
-      );
-      setContacts(response);
+      const response = await ContactService.getContactsByPage(currentPage);
+      setContacts(response.items);
+      setTotalPages(response.totalPagesCount - 1);
     } catch (error) {
       console.error("Failed to fetch vouchers");
     }
   };
 
-  const fetchTotalPages = async () => {
-    try {
-      const response = await ContactService.getTotalPages(searchTerm, date);
-      setTotalPages(response);
-    } catch (error) {
-      console.error("Failed to fetch total pages", error);
-    }
-  };
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [date, setDate] = useState("");
   useEffect(() => {
     setLoading(true);
-    fetchTotalPages();
+
     fetchContacts();
     setLoading(false);
   }, [currentPage, searchTerm, date]);
@@ -111,24 +100,6 @@ const ContactListPage = () => {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Grid item>
-            <TextField
-              label="ngày"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              style={{ marginRight: 20 }}
-              onChange={handleDateChange}
-            />
-          </Grid>
-          <Grid item>
-            <TextField
-              label="Tìm kiếm theo tên khách hàng"
-              variant="outlined"
-              onChange={handleSearchChange}
-            />
-          </Grid>
           <Grid item>
             <Button
               variant="contained"
