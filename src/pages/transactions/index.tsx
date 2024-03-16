@@ -1,4 +1,12 @@
-import { Box, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { FormatNumber, FormatDate } from "../../helpers";
 
@@ -49,6 +57,7 @@ const TransactiontionsPage = () => {
   const [transactions, setTransactions] = useState([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [type, setType] = useState("");
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -63,19 +72,23 @@ const TransactiontionsPage = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
+  const handleChange = (event: SelectChangeEvent) => {
+    setType(event.target.value as string);
+  };
   const fetchTransaction = async () => {
     const response = await TransactionService.getTransactions(
       searchTerm,
       startDate,
       endDate,
-      currentPage
+      currentPage,
+      type
     );
     setTransactions(response.items);
     setTotalPages(response.totalPagesCount);
   };
   useEffect(() => {
     fetchTransaction();
-  }, [searchTerm, startDate, endDate]);
+  }, [searchTerm, startDate, endDate, type]);
   return (
     <Box sx={{ display: "flex" }}>
       <SidebarMenu />
@@ -109,6 +122,19 @@ const TransactiontionsPage = () => {
           style={{ marginRight: 20 }}
           onChange={handleDateEndChange}
         />
+        <InputLabel id="demo-simple-select-label">Type</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={type}
+          label="Type"
+          onChange={handleChange}
+        >
+          <MenuItem value="Order">Order</MenuItem>
+          <MenuItem value="OrderProcessing">OrderProcessing</MenuItem>
+          <MenuItem value="System">System</MenuItem>
+          <MenuItem value="3rd">3rd</MenuItem>
+        </Select>
         <CustomTable columns={columns} data={transactions} />
         <Pagination
           total={totalPages}
