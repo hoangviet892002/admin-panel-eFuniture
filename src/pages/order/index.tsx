@@ -20,11 +20,11 @@ statusGraph.addEdge(1, 3);
 statusGraph.addEdge(2, 4);
 
 const statusLabels: Record<number, string> = {
-  1: "Chờ Xác Nhận",
-  2: "Đang Giao Hàng",
-  3: "Bị Hủy",
-  4: "Đã Giao Hàng",
-  5: "Từ Chối Xác Nhận",
+  1: "Pending",
+  2: "To Ship",
+  3: "Cancel",
+  4: "Recieve",
+  5: "Refuse to Confirm",
 };
 
 const OrderPage = () => {
@@ -65,12 +65,12 @@ const OrderPage = () => {
   };
 
   const columns = [
-    { id: "name", label: "Tên Khách Hàng", minWidth: 170 },
-    { id: "address", label: "Địa Chỉ", minWidth: 170 },
-    { id: "price", label: "Tổng đơn", minWidth: 170 },
+    { id: "name", label: "Customer Name", minWidth: 170 },
+    { id: "address", label: "Address", minWidth: 170 },
+    { id: "price", label: "Total Value", minWidth: 170 },
     {
       id: "status",
-      label: "Trạng Thái",
+      label: "Status",
       minWidth: 170,
       format: (value: number) => statusLabels[value] || "Unknown",
     },
@@ -103,10 +103,10 @@ const OrderPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Danh Sách Đơn Hàng
+          Order List
         </Typography>
         <TextField
-          label="Tìm kiếm theo khách hàng"
+          label="Search"
           variant="outlined"
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}

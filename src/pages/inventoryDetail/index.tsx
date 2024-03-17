@@ -41,20 +41,20 @@ const InventoryDetailPage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
   const fields: Field<Import>[] = [
-    { id: "name", label: "Tiêu đề", type: "string" },
-    { id: "price", label: "Giá trị", type: "string" },
+    { id: "name", label: "Title", type: "string" },
+    { id: "price", label: "Total value", type: "string" },
   ];
 
   const columnsItem = [
-    { id: "name", label: "Sản phẩm", minWidth: 150 },
+    { id: "name", label: "Product name", minWidth: 150 },
     {
       id: "price",
-      label: "Giá trị",
+      label: "Value",
       minWidth: 150,
     },
     {
       id: "quantity",
-      label: "Số lượng",
+      label: "Quantity",
       minWidth: 150,
     },
   ];

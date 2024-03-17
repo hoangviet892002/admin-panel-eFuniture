@@ -35,21 +35,21 @@ const TransactiontionsPage = () => {
   const [endDate, setEndDate] = useState<string>(FormatDate(new Date()));
   const [searchTerm, setSearchTerm] = useState("");
   const columns = [
-    { id: "from", label: "Nguồn ", minWidth: 150 },
+    { id: "from", label: "From ", minWidth: 150 },
     {
       id: "to",
-      label: "Số tài khoản",
+      label: "To",
       minWidth: 150,
     },
     {
       id: "creationDate",
-      label: "Ngày",
+      label: "Date",
       minWidth: 100,
     },
-    { id: "description", label: "Nội dung chuyển khoản", minWidth: 100 },
+    { id: "description", label: "Comment", minWidth: 100 },
     {
       id: "amount",
-      label: "Số tiền",
+      label: "Amount",
       minWidth: 100,
       format: (value: number) => FormatNumber(value) || "Unknown",
     },
@@ -94,16 +94,16 @@ const TransactiontionsPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Danh Sách Hóa Đơn Nạp Tiền
+          Transaction List
         </Typography>
         <TextField
-          label="Tìm kiếm "
+          label="Search "
           variant="outlined"
           onChange={handleSearchChange}
           style={{ marginRight: 20 }}
         />
         <TextField
-          label="từ ngày"
+          label="Start Date"
           type="date"
           InputLabelProps={{
             shrink: true,
@@ -113,7 +113,7 @@ const TransactiontionsPage = () => {
           onChange={handleDateStartChange}
         />
         <TextField
-          label="đến ngày"
+          label="End Date"
           type="date"
           InputLabelProps={{
             shrink: true,

@@ -35,7 +35,7 @@ const UpdateAccountPage = () => {
   const [Account, setAccount] = useState<Account>(initialAccounts);
   const { id } = useParams();
   const fields: Field<Account>[] = [
-    { id: "name", label: "Tên ", type: "string" },
+    { id: "name", label: "Nae ", type: "string" },
     { id: "dateOfBird", label: "Ngày sinh", type: "date" },
     {
       id: "gender",

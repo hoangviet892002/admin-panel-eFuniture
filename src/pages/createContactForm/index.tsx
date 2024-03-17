@@ -167,8 +167,8 @@ const CreateContactFormPages = () => {
     }
   };
   const columns = [
-    { id: "id", label: "Mã sản phẩm", minWidth: 170 },
-    { id: "name", label: "Tên Sản Phẩm", minWidth: 170 },
+    { id: "id", label: "Product ID", minWidth: 170 },
+    { id: "name", label: "Product Name", minWidth: 170 },
     {
       id: "id",
       label: "Action",
@@ -197,12 +197,12 @@ const CreateContactFormPages = () => {
     setItem(updatedItems);
   };
   const fieldForm = [
-    { label: "Tiêu đề", name: "title" },
-    { label: "Nội dung", name: "description" },
-    { label: "Số điện thoại", name: "phoneNumber" },
+    { label: "Title", name: "title" },
+    { label: "Description", name: "description" },
+    { label: "Phone Number", name: "phoneNumber" },
     { label: "Email", name: "email" },
-    { label: "Địa chỉ", name: "address" },
-    { label: "Tên", name: "name" },
+    { label: "Address", name: "address" },
+    { label: "Name", name: "name" },
   ];
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -221,7 +221,7 @@ const CreateContactFormPages = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <div>{Account.name}</div>
         <TextField
-          label="Tìm kiếm sản phẩm"
+          label="Search"
           variant="outlined"
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}
@@ -230,11 +230,11 @@ const CreateContactFormPages = () => {
           labelId="category-select-label"
           id="category-select"
           value={selectedCategory ? selectedCategory.id : ""}
-          label="Danh Mục"
+          label="Category"
           onChange={handleCategoryChange}
         >
           <MenuItem value="">
-            <em>Không chọn</em>
+            <em>None</em>
           </MenuItem>
           {categories.map((category: any) => (
             <MenuItem key={category.id} value={category.id}>
@@ -247,7 +247,7 @@ const CreateContactFormPages = () => {
           <Loading />
         ) : (
           <>
-            <TextField value={Account.name} label="Khách hàng" />
+            <TextField value={Account.name} label="Customer Name" />
             <CustomTable columns={columns} data={products} />
             <Pagination
               total={totalPages}
@@ -295,7 +295,7 @@ const CreateContactFormPages = () => {
                     color="primary"
                     onClick={() => handleRemoveItem(index)}
                   >
-                    Xóa
+                    Clear
                   </Button>
                 </Box>
               ))}
@@ -312,11 +312,11 @@ const CreateContactFormPages = () => {
             ))}
             <TextField
               value={value}
-              label="Tổng giá trị"
+              label="Total Value"
               fullWidth
               style={{ marginBottom: "20px" }}
             />
-            <TextField value={pay} label="Trả trước" fullWidth />
+            <TextField value={pay} label="Deposit" fullWidth />
             <Button
               type="submit"
               fullWidth
@@ -324,7 +324,7 @@ const CreateContactFormPages = () => {
               sx={{ mt: 3, mb: 2 }}
               onClick={handleSubmit}
             >
-              Lưu
+              Save
             </Button>
           </>
         )}

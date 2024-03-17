@@ -35,10 +35,10 @@ const PickCustomerPage = () => {
   const [selectRole] = useState(2);
 
   const columns = [
-    { id: "name", label: "Tên ", minWidth: 170 },
+    { id: "name", label: "Name ", minWidth: 170 },
     { id: "email", label: "Email", minWidth: 100 },
-    { id: "gender", label: "Giới tính", minWidth: 100 },
-    { id: "address", label: "Địa chỉ", minWidth: 100 },
+    { id: "gender", label: "Gender", minWidth: 100 },
+    { id: "address", label: "Address", minWidth: 100 },
     {
       id: "id",
       label: "Pick",
@@ -92,7 +92,7 @@ const PickCustomerPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Danh Sách Account
+          Account List
         </Typography>
 
         <TextField

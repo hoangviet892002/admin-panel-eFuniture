@@ -16,18 +16,18 @@ const AppointmentPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const columns = [
-    { id: "customerName", label: "Khách hàng ", minWidth: 150 },
+    { id: "customerName", label: "Customer Name", minWidth: 150 },
     {
       id: "staffName",
-      label: "Nhân viên",
+      label: "Staff Name",
       minWidth: 150,
     },
-    { id: "date", label: "Ngày", minWidth: 100 },
-    { id: "time", label: "Thời gian", minWidth: 100 },
+    { id: "date", label: "Date", minWidth: 100 },
+    { id: "time", label: "Time", minWidth: 100 },
     { id: "email", label: "Email", minWidth: 100 },
     {
       id: "phoneNumber",
-      label: "Số điện thoại",
+      label: "Phone Number",
       minWidth: 100,
     },
     {
@@ -74,7 +74,7 @@ const AppointmentPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Danh Sách Buổi hẹn
+          Appointment List
         </Typography>
 
         {loading ? (

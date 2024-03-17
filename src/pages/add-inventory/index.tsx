@@ -136,8 +136,8 @@ const CreateContactFormPages = () => {
     }
   };
   const columns = [
-    { id: "id", label: "Mã sản phẩm", minWidth: 170 },
-    { id: "name", label: "Tên Sản Phẩm", minWidth: 170 },
+    { id: "id", label: "Product ID", minWidth: 170 },
+    { id: "name", label: "Product Name", minWidth: 170 },
     {
       id: "id",
       label: "Action",
@@ -165,7 +165,7 @@ const CreateContactFormPages = () => {
     const updatedItems = item.filter((_, i) => i !== index);
     setItem(updatedItems);
   };
-  const fieldForm = [{ label: "Tiêu đề", name: "title" }];
+  const fieldForm = [{ label: "Title", name: "title" }];
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -181,7 +181,7 @@ const CreateContactFormPages = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <TextField
-          label="Tìm kiếm sản phẩm"
+          label="Search for product"
           variant="outlined"
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}
@@ -190,11 +190,11 @@ const CreateContactFormPages = () => {
           labelId="category-select-label"
           id="category-select"
           value={selectedCategory ? selectedCategory.id : ""}
-          label="Danh Mục"
+          label="Category"
           onChange={handleCategoryChange}
         >
           <MenuItem value="">
-            <em>Không chọn</em>
+            <em>None</em>
           </MenuItem>
           {categories.map((category) => (
             <MenuItem key={category.id} value={category.id}>
@@ -254,7 +254,7 @@ const CreateContactFormPages = () => {
                     color="primary"
                     onClick={() => handleRemoveItem(index)}
                   >
-                    Xóa
+                    Clear
                   </Button>
                 </Box>
               ))}
@@ -271,7 +271,7 @@ const CreateContactFormPages = () => {
             ))}
             <TextField
               value={value}
-              label="Tổng giá trị"
+              label="Total Value"
               fullWidth
               style={{ marginBottom: "20px" }}
             />
@@ -283,7 +283,7 @@ const CreateContactFormPages = () => {
               sx={{ mt: 3, mb: 2 }}
               onClick={handleSubmit}
             >
-              Lưu
+              Save
             </Button>
           </>
         )}

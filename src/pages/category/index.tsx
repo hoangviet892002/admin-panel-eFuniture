@@ -18,7 +18,7 @@ const CategoryPage = () => {
   ];
 
   const columns = [
-    { id: "name", label: "Tên ", minWidth: 170 },
+    { id: "name", label: "Name ", minWidth: 170 },
     {
       id: "id",
       label: "Update",
@@ -85,7 +85,7 @@ const CategoryPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Danh Sách Categories
+          Categories List
         </Typography>
         {loading ? (
           <Loading />

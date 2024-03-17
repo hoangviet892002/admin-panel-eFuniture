@@ -9,6 +9,7 @@ import OrderService from "./OrderService";
 import OrderProcessingService from "./OrderProcessingService";
 import ImportService from "./ImportService";
 import TransactionService from "./TransactionService";
+import DashBoardService from "./DashboardService";
 export {
   OrderService,
   AuthService,
@@ -21,4 +22,5 @@ export {
   OrderProcessingService,
   ImportService,
   TransactionService,
+  DashBoardService,
 };

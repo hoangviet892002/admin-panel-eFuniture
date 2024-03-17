@@ -38,6 +38,7 @@ const initialAppointment = {
 const statusGraph = new StatusGraph();
 
 statusGraph.addEdge(2, 3);
+statusGraph.addEdge(1, 2);
 
 const statusLabels: Record<number, string> = {
   1: "Pending",
@@ -55,16 +56,16 @@ const AppointmentDetailsPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const fields: Field<Appointment>[] = [
-    { id: "nameCustomer", label: "Tên Khách Hàng ", type: "string" },
-    { id: "nameStaff", label: "Tên Nhân Viên", type: "string" },
+    { id: "nameCustomer", label: "Customer Name ", type: "string" },
+    { id: "nameStaff", label: "Staff Name", type: "string" },
     { id: "email", label: "Mail", type: "string" },
-    { id: "phone", label: "Số điện thoại", type: "string" },
-    { id: "date", label: "Ngày ", type: "string" },
-    { id: "time", label: "Thời Gian", type: "string" },
-    { id: "description", label: "Mô tả yêu cầu", type: "string" },
+    { id: "phone", label: "Phone Number", type: "string" },
+    { id: "date", label: "Date ", type: "string" },
+    { id: "time", label: "Time", type: "string" },
+    { id: "description", label: "Description", type: "string" },
   ];
   const columns = [
-    { id: "staffName", label: "Tên ", minWidth: 170 },
+    { id: "staffName", label: "Staff Name ", minWidth: 170 },
     {
       id: "staffId",
       label: "Action",
