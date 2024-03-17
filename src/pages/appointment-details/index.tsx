@@ -38,6 +38,7 @@ const initialAppointment = {
 const statusGraph = new StatusGraph();
 
 statusGraph.addEdge(2, 3);
+statusGraph.addEdge(1, 2);
 
 const statusLabels: Record<number, string> = {
   1: "Pending",

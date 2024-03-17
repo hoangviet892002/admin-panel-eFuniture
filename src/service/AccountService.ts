@@ -96,6 +96,7 @@ class AccountService {
   }
 
   static async createAccount(accountData: any) {
+    console.log(accountData);
     axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${localStorage.getItem("accessToken")}`;

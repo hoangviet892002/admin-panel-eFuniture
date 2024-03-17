@@ -48,11 +48,11 @@ const OrderDetailPage = () => {
     type: "string" | "number" | "image";
   }
   const statusLabels: Record<number, string> = {
-    1: "Chờ Xác Nhận",
-    2: "Đang Giao Hàng",
-    3: "Bị Hủy",
-    4: "Đã Giao Hàng",
-    5: "Từ Chối Xác Nhận",
+    1: "Pending",
+    2: "To Ship",
+    3: "Cancel",
+    4: "Recieve",
+    5: "Refuse to Confirm",
   };
   const { id } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
