@@ -39,11 +39,11 @@ const AccountPage = () => {
   };
 
   const columns = [
-    { id: "name", label: "Tên ", minWidth: 170 },
+    { id: "name", label: "Name", minWidth: 170 },
     { id: "email", label: "Email", minWidth: 100 },
-    { id: "gender", label: "Giới tính", minWidth: 100 },
-    { id: "address", label: "Địa chỉ", minWidth: 100 },
-    { id: "wallet", label: "Số dư", minWidth: 100 },
+    { id: "gender", label: "Gender", minWidth: 100 },
+    { id: "address", label: "Address", minWidth: 100 },
+    { id: "wallet", label: "Balance", minWidth: 100 },
     {
       id: "roles",
       label: "Role",
@@ -51,7 +51,7 @@ const AccountPage = () => {
     },
     {
       id: "id",
-      label: "Thao tác tiền",
+      label: "Payment",
       minWidth: 170,
       format: (value: string) => (
         <AmountAction
@@ -69,7 +69,7 @@ const AccountPage = () => {
         if (rowData.lockoutEnd === null) {
           return <Button onClick={() => handleBan(value)}>Ban</Button>;
         } else {
-          return <Button onClick={() => handleBan(value)}>Un Ban</Button>;
+          return <Button onClick={() => handleBan(value)}>Unban</Button>;
         }
       },
     },
@@ -133,7 +133,7 @@ const AccountPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Danh Sách Account
+          Account List
         </Typography>
         <Button
           variant="contained"
@@ -142,10 +142,10 @@ const AccountPage = () => {
             navigate("add");
           }}
         >
-          Tạo Account
+          Create Account
         </Button>
         <TextField
-          label="Tìm kiếm khách hàng theo tên"
+          label="Search Customer by name"
           variant="outlined"
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}

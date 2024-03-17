@@ -36,10 +36,10 @@ const UpdateProductPages = () => {
     { label: string; value: string }[]
   >([]);
   const fields: Field<Product>[] = [
-    { id: "name", label: "Tên Sản Phẩm", type: "string" },
-    { id: "description", label: "Mô tả", type: "string" },
-    { id: "price", label: "Giá", type: "number" },
-    { id: "image", label: "Ảnh", type: "image" },
+    { id: "name", label: "Product Name", type: "string" },
+    { id: "description", label: "Desciption", type: "string" },
+    { id: "price", label: "Price", type: "number" },
+    { id: "image", label: "Image", type: "image" },
     {
       id: "categoryId",
       type: "select",
@@ -82,7 +82,7 @@ const UpdateProductPages = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Chỉnh sửa sản phẩm
+          Update Product
         </Typography>
         {loading ? (
           <Loading />

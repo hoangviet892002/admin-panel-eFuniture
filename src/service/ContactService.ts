@@ -63,7 +63,7 @@ class ContactService {
         "Authorization"
       ] = `Bearer ${localStorage.getItem("accessToken")}`;
       const response = await axios.get(
-        `${API_URL}/GetContractsByPage?pageIndex=${page}&pageSize=10`
+        `${API_URL}/GetContractsByPage?pageIndex=${page - 1}&pageSize=10`
       );
       if (response.data.isSuccess === true) {
         response.data.data.items.map((item: any) => {
@@ -185,8 +185,22 @@ class ContactService {
     }
   }
 
-  static async getContactStatus(orderId: string) {
-    return initialStatus;
+  static async updateStatusOrderProcessing(contractId: string, status: any) {
+    try {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("accessToken")}`;
+      const response = await axios.put(
+        `${API_URL}/UpdateStatusOrderProcessing?contractId=${contractId}&status=${status}`
+      );
+      if (response.data.isSuccess === true) {
+        return response.data.data;
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   }
   static async getContactItem(orderId: string) {
     return initialItem;

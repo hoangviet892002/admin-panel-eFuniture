@@ -1,4 +1,10 @@
-import { Box, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Box,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 import {
   CustomTable,
   SidebarMenu,
@@ -50,6 +56,13 @@ statusGraph.addEdge(1, 2);
 
 const statusGraphOrderProcessing = new StatusGraph();
 statusGraphOrderProcessing.addEdge(1, 2);
+statusGraphOrderProcessing.addEdge(1, 5);
+statusGraphOrderProcessing.addEdge(2, 5);
+statusGraphOrderProcessing.addEdge(3, 5);
+statusGraphOrderProcessing.addEdge(2, 3);
+statusGraphOrderProcessing.addEdge(4, 6);
+statusGraphOrderProcessing.addEdge(5, 6);
+statusGraphOrderProcessing.addEdge(6, 7);
 
 const ContactDetailPage = () => {
   interface Field<T> {
@@ -59,74 +72,68 @@ const ContactDetailPage = () => {
   }
   const statusLabels: Record<number, string> = {
     1: "Pending",
-    2: "Accepts",
-    3: "Cancel",
+    2: "Cancel",
+    3: "Accepts",
     4: "Require Again",
   };
   const statusOrderLabels: Record<number, string> = {
     1: "Pending",
-    2: "Accepts",
-    3: "Cancel",
-    4: "Require Again",
+    2: "Under Construction",
+    3: "Complete Construction",
+    4: "Delivering",
+    5: "Cancelled",
+    6: "Delivered",
+    7: "Rejected",
   };
   const { id } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
   const fields: Field<Contact>[] = [
     { id: "customerContractName", label: "Name", type: "string" },
-    { id: "title", label: "Tiêu đề", type: "string" },
-    { id: "description", label: "Nội dung", type: "string" },
-    { id: "value", label: "Giá trị", type: "string" },
-    { id: "pay", label: "Trả trước", type: "string" },
+    { id: "title", label: "Title", type: "string" },
+    { id: "description", label: "Description", type: "string" },
+    { id: "value", label: "Value", type: "string" },
+    { id: "pay", label: "Deposit", type: "string" },
     { id: "phoneNumber", label: "Phone", type: "string" },
     { id: "email", label: "Mail", type: "string" },
-    { id: "address", label: "Địa chỉ", type: "string" },
+    { id: "address", label: "Adress", type: "string" },
   ];
   const fieldUpdate: Field<Contact>[] = [
-    { id: "title", label: "Tiêu đề", type: "string" },
-    { id: "description", label: "Nội dung", type: "string" },
+    { id: "title", label: "Title", type: "string" },
+    { id: "description", label: "Description", type: "string" },
   ];
 
   const columnsItem = [
-    { id: "productName", label: "Sản phẩm", minWidth: 150 },
+    { id: "productName", label: "Product Name", minWidth: 150 },
     {
       id: "price",
-      label: "Giá trị",
+      label: "Price",
       minWidth: 150,
     },
     {
       id: "quantity",
-      label: "Số lượng",
+      label: "Quantity",
       minWidth: 150,
     },
   ];
   const [data, setData] = useState<Contact>(initialData);
-  const [status, setStatus] = useState<Status[]>([]);
+
   const [item, setItem] = useState<Item[]>([]);
   const fetchItem = async () => {
     const response = await ContactService.getContactItem(`${id}`);
     setItem(response);
   };
-  const fetchStatus = async () => {
-    const response = await ContactService.getContactStatus(`${id}`);
-    setStatus(response);
-  };
+
   const fetchData = async () => {
     const response = await ContactService.getContactById(`${id}`);
     setData(response);
     setItem(response.item);
-  };
-  const handleStatusChange = (id: string, newStatus: number) => {
-    OrderProcessingService.updateStatus(id, newStatus);
-    setLoading(true);
-    fetchItem();
-    setLoading(false);
   };
 
   useEffect(() => {
     setLoading(true);
     // fetchItem();
     fetchData();
-    fetchStatus();
+
     setLoading(false);
   }, []);
   const save = (data: any) => {
@@ -134,6 +141,14 @@ const ContactDetailPage = () => {
     ContactService.updateContact(data);
     fetchData();
 
+    setLoading(false);
+  };
+
+  const handleChange = async (event: SelectChangeEvent<number>) => {
+    setLoading(true);
+    const selectedStatus = event.target.value;
+    await ContactService.updateStatusOrderProcessing(`${id}`, selectedStatus);
+    fetchData();
     setLoading(false);
   };
   return (
@@ -174,7 +189,7 @@ const ContactDetailPage = () => {
               variant="outlined"
             />
             <CustomTable columns={columnsItem} data={item} />
-            {data.statusContract === 2 && (
+            {data.statusContract === 3 && (
               <>
                 <TextField
                   value={
@@ -183,8 +198,11 @@ const ContactDetailPage = () => {
                   label=""
                 />
 
-                <Select value={data.statusOrderProcessing.statusCode}>
-                  {statusGraph
+                <Select
+                  value={data.statusOrderProcessing.statusCode}
+                  onChange={handleChange}
+                >
+                  {statusGraphOrderProcessing
                     .getNextStates(data.statusOrderProcessing.statusCode)
                     .map((nextState) => (
                       <MenuItem value={nextState}>

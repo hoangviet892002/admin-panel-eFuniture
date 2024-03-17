@@ -18,12 +18,12 @@ const statusLabels: Record<string, string> = {
 };
 
 const columns = [
-  { id: "name", label: "Tiêu đề", minWidth: 170 },
-  { id: "totalPrice", label: "Giá trị", minWidth: 170 },
+  { id: "name", label: "Title", minWidth: 170 },
+  { id: "totalPrice", label: "Total Value", minWidth: 170 },
 
   {
     id: "status",
-    label: "Trạng thái",
+    label: "Status",
     minWidth: 100,
     format: (value: number) => statusLabels[value] || "Unknown",
   },
@@ -81,7 +81,7 @@ const InventoryPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Quản Lý Nhập hàng
+          Manager Inventory
         </Typography>
         <div className="container-button">
           <Button
@@ -89,7 +89,7 @@ const InventoryPage = () => {
             color="primary"
             onClick={navigateToAddInventoryPage}
           >
-            Thêm Đơn Nhập
+            Import
           </Button>
         </div>
         {loading ? (

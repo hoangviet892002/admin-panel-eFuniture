@@ -21,24 +21,24 @@ import { Contact } from "../../interface";
 const ContactListPage = () => {
   const statusLabels: Record<number, string> = {
     1: "Pending",
-    2: "Accepts",
-    3: "Cancel",
+    2: "Cancel",
+    3: "Accepts",
     4: "Require Again",
   };
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const columns = [
-    { id: "customerContractName", label: "Khách hàng ", minWidth: 150 },
+    { id: "customerContractName", label: "Customer Name ", minWidth: 150 },
     {
       id: "title",
-      label: "Tiêu đề",
+      label: "Title",
       minWidth: 150,
     },
-    { id: "value", label: "Giá trị", minWidth: 100 },
-    { id: "pay", label: "Trả trước", minWidth: 100 },
+    { id: "value", label: "Value", minWidth: 100 },
+    { id: "pay", label: "Deposit", minWidth: 100 },
     {
       id: "status",
-      label: "Trạng thái",
+      label: "Status",
       minWidth: 100,
       format: (value: number) => statusLabels[value],
     },
@@ -80,18 +80,13 @@ const ContactListPage = () => {
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDate(event.target.value);
-  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Danh Sách Hợp đồng
+          Contract List
         </Typography>
 
         <Grid
@@ -108,7 +103,7 @@ const ContactListPage = () => {
                 navigate("add");
               }}
             >
-              TẠO HỢP ĐỒNG
+              Contract Create
             </Button>
           </Grid>
         </Grid>

@@ -11,26 +11,26 @@ const AddVoucherPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const AddVoucherFields: FormField[] = [
     { type: "text", label: "Name", name: "voucherName" },
-    { type: "number", label: "Giá trị giảm(%)", name: "percent" },
-    { type: "number", label: "Số lần sử dụng", name: "number" },
+    { type: "number", label: "Discount(%)", name: "percent" },
+    { type: "number", label: "Quantity", name: "number" },
     {
       type: "date",
-      label: "Ngày bắt đầu",
+      label: "Start Date",
       name: "startDate",
     },
     {
       type: "date",
-      label: "Ngày kết thúc",
+      label: "End Date",
       name: "endDate",
     },
     {
       type: "number",
-      label: "Dành cho đơn hàng nhỏ nhất là",
+      label: "Minimum Order Value",
       name: "minimumOrderValue",
     },
     {
       type: "number",
-      label: "Dành cho đơn hàng lớn nhất là",
+      label: "Maximum Discount Value",
       name: "maximumDiscountAmount",
     },
   ];

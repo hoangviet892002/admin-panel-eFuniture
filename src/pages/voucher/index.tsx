@@ -20,11 +20,11 @@ interface Voucher {
 }
 
 const columns = [
-  { id: "name", label: "Tên Voucher", minWidth: 170 },
-  { id: "startDate", label: "Ngày bắt đầu", minWidth: 100 },
-  { id: "endDate", label: "Ngày kết thúc", minWidth: 100 },
-  { id: "percent", label: "Giá trị(%)", minWidth: 100 },
-  { id: "maxUse", label: "Số lần sử dụng", minWidth: 100 },
+  { id: "name", label: "Voucher Name", minWidth: 170 },
+  { id: "startDate", label: "Start Date", minWidth: 100 },
+  { id: "endDate", label: "End Date", minWidth: 100 },
+  { id: "percent", label: "Discount(%)", minWidth: 100 },
+  { id: "maxUse", label: "Quantity", minWidth: 100 },
 ];
 const VoucherPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -89,7 +89,7 @@ const VoucherPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Quản Lý Voucher
+          Voucher Management
         </Typography>
 
         <div className="container-button">
@@ -98,10 +98,10 @@ const VoucherPage = () => {
             color="primary"
             onClick={navigateToAddVoucherPage}
           >
-            Thêm Voucher
+            Create Voucher
           </Button>
           <TextField
-            label="ngày"
+            label="Date"
             type="date"
             InputLabelProps={{
               shrink: true,

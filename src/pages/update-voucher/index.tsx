@@ -39,13 +39,17 @@ const UpdateVoucherPages = () => {
   const [Voucher, setVoucher] = useState<Voucher>(initialVouchers);
   const { id } = useParams();
   const fields: Field<Voucher>[] = [
-    { id: "voucherName", label: "Tên Voucher", type: "string" },
-    { id: "startDate", label: "Ngày bắt đầu", type: "date" },
-    { id: "endDate", label: "Ngày kết thúc", type: "date" },
-    { id: "number", label: "Số lần sử dụng", type: "number" },
-    { id: "percent", label: "Giá trị sử dụng (%)", type: "number" },
-    { id: "minimumOrderValue", label: "Đơn hàng tối thiểu", type: "number" },
-    { id: "maximumDiscountAmount", label: "Đơn hàng tối đa", type: "number" },
+    { id: "voucherName", label: " Voucher Name", type: "string" },
+    { id: "startDate", label: "Start Date", type: "date" },
+    { id: "endDate", label: "End Date", type: "date" },
+    { id: "number", label: "Quantity", type: "number" },
+    { id: "percent", label: "Discount(%)", type: "number" },
+    { id: "minimumOrderValue", label: "Minimum Order Value", type: "number" },
+    {
+      id: "maximumDiscountAmount",
+      label: "Maximum Discount Amount",
+      type: "number",
+    },
   ];
   const fetchVoucher = async () => {
     setLoading(true);
@@ -70,7 +74,7 @@ const UpdateVoucherPages = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Chỉnh sửa sản phẩm
+          Update Voucher
         </Typography>
         {loading ? (
           <Loading />

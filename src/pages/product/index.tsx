@@ -129,22 +129,22 @@ const ProductPage = () => {
   };
 
   const columns = [
-    { id: "name", label: "Tên Sản Phẩm", minWidth: 170 },
+    { id: "name", label: "Product Name", minWidth: 170 },
     {
       id: "price",
-      label: "Giá",
+      label: "Price",
       minWidth: 100,
       format: (value: number) => FormatNumber(value) || "Unknown",
     },
     {
       id: "inventoryQuantity",
-      label: "Số Lượng",
+      label: "Quantity",
       minWidth: 100,
       format: (value: number) => FormatNumber(value) || "Unknown",
     },
     {
       id: "status",
-      label: "Trạng thái",
+      label: "Status",
       minWidth: 100,
       format: (value: number) => statusLabels[value],
     },
@@ -155,7 +155,7 @@ const ProductPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Quản Lý Sản Phẩm
+          Product Management
         </Typography>
         <div className="container-button">
           <Button
@@ -163,11 +163,11 @@ const ProductPage = () => {
             color="primary"
             onClick={navigateToAddProductPage}
           >
-            Thêm Sản Phẩm
+            Add Product
           </Button>
 
           <TextField
-            label="Tìm kiếm sản phẩm"
+            label="Search"
             variant="outlined"
             onChange={handleSearchChange}
             style={{ marginLeft: 20 }}
@@ -194,7 +194,7 @@ const ProductPage = () => {
             onChange={handleCategoryChange}
           >
             <MenuItem value="">
-              <em>Không chọn</em>
+              <em>None</em>
             </MenuItem>
             {categories.map((category) => (
               <MenuItem key={category.id} value={category.id}>

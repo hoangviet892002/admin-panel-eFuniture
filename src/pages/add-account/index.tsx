@@ -11,15 +11,15 @@ const AddAccountPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const AddAccountFields: FormField[] = [
     { type: "text", label: "Username", name: "userName" },
-    { type: "text", label: "Tên", name: "name" },
+    { type: "text", label: "Full Name", name: "name" },
     {
       type: "date",
-      label: "Ngày sinh",
+      label: "Date of Birth",
       name: "dateOfBird",
     },
     {
       type: "select",
-      label: "Giới tính",
+      label: "Gender",
       name: "gender",
       options: [
         { label: "Male", value: "male" },
@@ -32,16 +32,16 @@ const AddAccountPage: React.FC = () => {
       label: "Role",
       name: "role",
       options: [
-        { label: "Nhân viên", value: 3 },
-        { label: "Giao hàng", value: 4 },
-        { label: "Khách", value: 2 },
+        { label: "Staff", value: 3 },
+        { label: "Delivery", value: 4 },
+        { label: "Customer", value: 2 },
       ],
     },
     { type: "text", label: "Email", name: "email" },
 
     {
       type: "text",
-      label: "Số điện thoại",
+      label: "Phone Number",
       name: "phoneNumber",
     },
 

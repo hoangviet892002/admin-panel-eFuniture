@@ -58,23 +58,23 @@ const OrderDetailPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
   const fields: Field<OrderDTO>[] = [
-    { id: "phoneNumber", label: "Số liên lạc", type: "string" },
+    { id: "phoneNumber", label: "Phone Number", type: "string" },
     { id: "email", label: "Mail", type: "string" },
-    { id: "address", label: "Địa chỉ", type: "string" },
-    { id: "name", label: "tên nhận", type: "string" },
-    { id: "price", label: "Giá", type: "string" },
+    { id: "address", label: "Address", type: "string" },
+    { id: "name", label: "Customer Name", type: "string" },
+    { id: "price", label: "Total Value", type: "string" },
   ];
 
   const columnsItem = [
-    { id: "name", label: "Sản phẩm", minWidth: 150 },
+    { id: "name", label: "Product Name", minWidth: 150 },
     {
       id: "price",
-      label: "Giá trị",
+      label: "Value",
       minWidth: 150,
     },
     {
       id: "quantity",
-      label: "Số lượng",
+      label: "Quantity",
       minWidth: 150,
     },
   ];

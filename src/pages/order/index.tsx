@@ -65,12 +65,12 @@ const OrderPage = () => {
   };
 
   const columns = [
-    { id: "name", label: "Tên Khách Hàng", minWidth: 170 },
-    { id: "address", label: "Địa Chỉ", minWidth: 170 },
-    { id: "price", label: "Tổng đơn", minWidth: 170 },
+    { id: "name", label: "Customer Name", minWidth: 170 },
+    { id: "address", label: "Address", minWidth: 170 },
+    { id: "price", label: "Total Value", minWidth: 170 },
     {
       id: "status",
-      label: "Trạng Thái",
+      label: "Status",
       minWidth: 170,
       format: (value: number) => statusLabels[value] || "Unknown",
     },
@@ -103,10 +103,10 @@ const OrderPage = () => {
       <SidebarMenu />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Danh Sách Đơn Hàng
+          Order List
         </Typography>
         <TextField
-          label="Tìm kiếm theo khách hàng"
+          label="Search"
           variant="outlined"
           onChange={handleSearchChange}
           style={{ marginLeft: 20 }}
