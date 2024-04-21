@@ -20,23 +20,65 @@ const MyForm: React.FC<FormProps> = ({ fields, onSubmit }) => {
   const [selectedImages, setSelectedImages] = useState<SelectedImages>({});
 
   const handleChange = (name: string, value: string | FileList) => {
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-
-    if (value instanceof FileList && value.length > 0) {
-      const fileURL = URL.createObjectURL(value[0]);
+    if (value instanceof FileList) {
+      // Create file URLs from the new files and append them to the existing files
+      const newFileURLs = Array.from(value).map((file) =>
+        URL.createObjectURL(file)
+      );
       setSelectedImages((prevImages) => ({
         ...prevImages,
-        [name]: fileURL,
+        [name]: [...(prevImages[name] || []), ...newFileURLs],
+      }));
+
+      setFormValues((prevValues: any) => ({
+        ...prevValues,
+        [name]: [...(prevValues[name] || []), ...Array.from(value)],
+      }));
+    } else {
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
       }));
     }
+  };
+
+  const handleRemoveImage = (fieldName: string, index: number) => {
+    setSelectedImages((prev) => {
+      const updatedImages = [...prev[fieldName]];
+      updatedImages.splice(index, 1);
+      return { ...prev, [fieldName]: updatedImages };
+    });
+
+    setFormValues((prev: any) => {
+      const updatedFiles = prev[fieldName] ? [...prev[fieldName]] : [];
+      updatedFiles.splice(index, 1);
+
+      return { ...prev, [fieldName]: updatedFiles };
+    });
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     onSubmit(formValues);
+  };
+  const renderImages = (images: any, fieldName: string) => {
+    return images.map((src: any, index: any) => (
+      <Box key={index} position="relative" display="inline-block" m={1}>
+        <img
+          src={src}
+          alt={`Selected ${index}`}
+          style={{ maxWidth: "200px", height: "auto" }}
+        />
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => handleRemoveImage(fieldName, index)}
+          style={{ position: "absolute", top: 0, right: 0 }}
+        >
+          Remove
+        </Button>
+      </Box>
+    ));
   };
 
   const renderField = (field: FormField) => {
@@ -84,14 +126,26 @@ const MyForm: React.FC<FormProps> = ({ fields, onSubmit }) => {
               onChange={(e) =>
                 handleChange(field.name, e.target.files as FileList)
               }
+              hidden
             />
+            <Button
+              variant="contained"
+              color="primary"
+              component="span"
+              onClick={() => {
+                const fileInput = document.getElementById(
+                  field.name
+                ) as HTMLInputElement;
+                if (fileInput) fileInput.click();
+              }}
+            >
+              Add Images
+            </Button>
             {selectedImages[field.name] && (
               <Box mt={2}>
-                <img
-                  src={selectedImages[field.name]}
-                  alt="Selected"
-                  style={{ maxWidth: "200px", height: "auto" }}
-                />
+                {selectedImages[field.name]
+                  ? renderImages(selectedImages[field.name], field.name)
+                  : null}
               </Box>
             )}
           </Box>

@@ -47,8 +47,10 @@ class OrderService {
       const response = await axios.get(
         `${API_URL}/GetOrderByFilter?PageSize=10&PageIndex=${page}&Search=${searchName}`
       );
+
       if (response.data.isSuccess === true) {
         const result = response.data.data;
+        console.log(result);
         result.items.map((item: any) => {
           item.status = item.statusOrder.statusCode;
         });
