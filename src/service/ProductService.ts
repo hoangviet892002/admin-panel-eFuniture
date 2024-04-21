@@ -84,24 +84,30 @@ class ProductService {
   }
 
   static async createProduct(ProductData: any) {
+    console.log(ProductData.picture);
     try {
+      let urls = "";
       delete axios.defaults.headers.common["Authorization"];
-      const formData = new FormData();
-      formData.append("file", ProductData.picture[0]);
-      formData.append("upload_preset", "ml_default");
-      console.log(ProductData.category);
-      console.log(formData);
-      try {
-        const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dulapxpnp/image/upload",
-          formData
-        );
-        ProductData.image = response.data.secure_url;
-        ProductData.categoryId = ProductData.category;
-      } catch (error) {
-        toast.error("Error Images");
-        return;
+      for (let i = 0; i < ProductData.picture.length; i++) {
+        const formData = new FormData();
+        formData.append("file", ProductData.picture[i]);
+        formData.append("upload_preset", "ml_default");
+
+        try {
+          const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/dulapxpnp/image/upload",
+            formData
+          );
+          if (urls !== "") urls = urls + ";" + response.data.secure_url;
+          else urls = response.data.secure_url;
+        } catch (error) {
+          toast.error("Error uploading image");
+          return;
+        }
       }
+      console.log(urls);
+      ProductData.image = urls;
+      ProductData.categoryId = ProductData.category;
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${localStorage.getItem("accessToken")}`;

@@ -72,7 +72,7 @@ const InventoryDetailPage = () => {
     fetchItem();
 
     setLoading(false);
-  });
+  }, []);
   const handleStatusChange = async (event: SelectChangeEvent<number>) => {
     let newStatus = event.target.value;
     await ImportService.changeStatus(`${id}`, String(newStatus));
