@@ -1,5 +1,5 @@
 export interface FormField {
-  type: "text" | "number" | "password" | "select" | "image" | "date";
+  type: "text" | "number" | "password" | "select" | "image" | "date" | "image1";
   name: string;
   label: string;
   options?: Array<{ label: string; value: string | number }>;

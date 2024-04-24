@@ -15,6 +15,7 @@ import Action from "./Action";
 const CategoryPage = () => {
   const AddFields: FormField[] = [
     { type: "text", label: "Name", name: "name" },
+    { type: "image1", label: "Image", name: "image" },
   ];
 
   const columns = [
