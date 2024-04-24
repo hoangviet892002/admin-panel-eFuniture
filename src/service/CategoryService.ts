@@ -25,13 +25,31 @@ class CategoryService {
     return initialCategory;
   }
 
-  static async createCategory(CategoryData: Category) {
+  static async createCategory(CategoryData: any) {
+    delete axios.defaults.headers.common["Authorization"];
+    const formData = new FormData();
+    formData.append("file", CategoryData.image[CategoryData.image.length - 1]);
+    formData.append("upload_preset", "ml_default");
+    let urls = CategoryData.name;
+    try {
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dulapxpnp/image/upload",
+        formData
+      );
+      if (urls !== "") urls = urls + ";" + response.data.secure_url;
+      else urls = response.data.secure_url;
+
+    } catch (error) {
+      toast.error("Error uploading image");
+      return;
+    }
+    formData.append("upload_preset", "ml_default");
     axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${localStorage.getItem("accessToken")}`;
     try {
       const response = await axios.post(`${API_URL}/CreateCategory`, {
-        name: CategoryData.name,
+        name: urls,
       });
       if (response.data.isSuccess !== true) {
         toast.error(response.data.message);

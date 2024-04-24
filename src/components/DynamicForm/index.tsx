@@ -151,6 +151,47 @@ const MyForm: React.FC<FormProps> = ({ fields, onSubmit }) => {
           </Box>
         );
 
+      case "image1":
+        return (
+          <Box marginY={2} key={field.name}>
+            <InputLabel htmlFor={field.name}>{field.label}</InputLabel>
+            <input
+              type="file"
+              id={field.name}
+              multiple
+              onChange={(e) =>
+                handleChange(field.name, e.target.files as FileList)
+              }
+              hidden
+            />
+            {selectedImages[field.name] && (
+              <Box position="relative" display="inline-block" m={1}>
+                <img
+                  src={
+                    selectedImages[field.name][
+                      selectedImages[field.name].length - 1
+                    ]
+                  }
+                  style={{ maxWidth: "200px", height: "auto" }}
+                />
+              </Box>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              component="span"
+              onClick={() => {
+                const fileInput = document.getElementById(
+                  field.name
+                ) as HTMLInputElement;
+                if (fileInput) fileInput.click();
+              }}
+            >
+              Choose Image
+            </Button>
+          </Box>
+        );
+
       case "date":
         return (
           <TextField
